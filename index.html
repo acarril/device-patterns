@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <body>
+    <h1>Patrones de distribución óptima de dispositivos en plantaciones</h1>
+    <br>
     <form id="api-form">
-        <label for="p">P:</label>
+        <label for="p">Plantas:</label>
         <input type="number" id="p" name="p">
-        <label for="d_min">d_min:</label>
+        <label for="d_min">Densidad:</label>
         <input type="number" id="d_min" name="d_min">
-        <input type="submit" value="Submit">
+        <input type="submit" value="Calcular">
     </form>
     <div id="result"></div>
 
@@ -29,12 +31,18 @@
         .then(response => response.json())
         .then(data => {
             const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = '<h2>Results</h2>';
+            resultDiv.innerHTML = '<h2>Resultados</h2>';
 
             ['min_densidad', 'min_hileras'].forEach(key => {
                 const item = data[key];
+                let title = '';
+                if (key === 'min_densidad') {
+                    title = 'Min. densidad';
+                } else if (key === 'min_hileras') {
+                    title = 'Min. hileras';
+                }
                 resultDiv.innerHTML += `
-                    <h3>${key}</h3>
+                    <h3>${title}:</h3>
                     <p>Densidad: ${item.densidad}</p>
                     <p>Patrones: ${item.patrones.join(', ')}</p>
                 `;
