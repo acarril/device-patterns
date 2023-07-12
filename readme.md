@@ -1,10 +1,5 @@
-<!-- insert image -->
-```python:chalicelib/devices.py [29-51]
- 
-```
 
-```python:chalicelib/devices.py [1-2]
- 
+``` python:chalicelib/devices.py -s 29 -e 51
 ```
 
 <!-- insert local image -->
