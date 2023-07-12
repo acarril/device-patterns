@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f6f8fa;
+    color: #24292e;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 3em;
+    height: 100vh;
+}
+header, main {
+    width: 80%; /* you can adjust the value to what best suits you */
+    max-width: 800px; /* adjust this too as per your needs */
+}
+header {
+    margin-bottom: 1em;
+    text-align: left;
+}
+.content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+form {
+    background-color: #ffffff;
+    border: 1px solid #e1e4e8;
+    padding: 1em;
+    border-radius: 6px;
+}
+label, input {
+    display: block;
+    margin-bottom: 0.5em;
+}
+input[type="number"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5em;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+}
+input[type="submit"] {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+    background-color: #218839;
+}
+#result {
+    margin-top: 2em;
+    width: 100%;
+    max-width: 600px;
+}
