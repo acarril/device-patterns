@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form id="api-form">
+        <label for="p">P:</label>
+        <input type="number" id="p" name="p">
+        <label for="d_min">d_min:</label>
+        <input type="number" id="d_min" name="d_min">
+        <input type="submit" value="Submit">
+    </form>
+    <div id="result"></div>
+
+    <script>
+    document.getElementById('api-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // prevent the form from being submitted normally
+        const p = document.getElementById('p').value;
+        const d_min = document.getElementById('d_min').value;
+
+        fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                p: p,
+                d_min: d_min
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<h2>Results</h2>';
+
+            ['min_densidad', 'min_hileras'].forEach(key => {
+                const item = data[key];
+                resultDiv.innerHTML += `
+                    <h3>${key}</h3>
+                    <p>Densidad: ${item.densidad}</p>
+                    <p>Patrones: ${item.patrones.join(', ')}</p>
+                `;
+            });
+        });
+    });
+    </script>
+</body>
+</html>
