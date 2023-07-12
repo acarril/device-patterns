@@ -48,35 +48,30 @@
                     const item = data[key];
                     let title = '';
                     if (key === 'min_densidad') {
-                        title = 'Minimizando densidad';
-                        desc = 'foo';
+                        title = 'Min. densidad';
                     } else if (key === 'min_hileras') {
-                        title = 'Minimizando hileras';
-                        desc = 'bar';
+                        title = 'Min. hileras';
                     }
                     resultDiv.innerHTML += `
                         <h3>${title}</h3>
-                        <p><b>Densidad:</b> ${item.densidad}</p>
-                        <p><b>Patrones:</b> </p>
+                        <p><b>Densidad estimada:</b> ${item.densidad}</p>
+                        <p><b>Hileras:</b> </p>
                     `;
                     item.patrones.forEach(pattern => {
                         const [filled, total] = pattern.split('/').map(Number);
                         let dotString = '';
-                        for (let j = 0; j < 3; j++) { // Repeat pattern 3 times
-                            dotString += '<div class="row">';
-                            for (let i = 0; i < total; i++) {
-                                if (i < filled) {
-                                    dotString += '<span class="dot filled"></span>';
-                                } else {
-                                    dotString += '<span class="dot"></span>';
-                                }
+                        for (let i = 0; i < 20; i++) {
+                            const shouldFill = i % total < filled;
+                            if (shouldFill) {
+                                dotString += '<span class="dot filled"></span>';
+                            } else {
+                                dotString += '<span class="dot"></span>';
                             }
-                            dotString += '</div>';
                         }
                         resultDiv.innerHTML += `
                             <div class="pattern-container">
-                                <p>${pattern} </p>
-                                <div class="pattern">${dotString}</div><p style="color: LightGray">...</p>
+                                <p>${pattern}:</p>
+                                <div class="pattern">${dotString}</div><p style="color: LightGray">...</p></div>
                             </div>
                         `;
                     });
