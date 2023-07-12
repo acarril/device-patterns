@@ -9,7 +9,6 @@
         <h1>Patrones de distribución óptima de dispositivos en plantaciones</h1>
         <p>Más información en <a href="https://github.com/acarril/device-patterns" target="_blank">https://github.com/acarril/device-patterns</a></p>
     </header>
-    </header>
 
     <main>
         <form id="api-form">
@@ -43,21 +42,44 @@
             .then(response => response.json())
             .then(data => {
                 const resultDiv = document.getElementById('result');
-                resultDiv.innerHTML = '<h2>Resultados</h2>';
-    
+                resultDiv.innerHTML = '<h2>Soluciones</h2>';
+
                 ['min_densidad', 'min_hileras'].forEach(key => {
                     const item = data[key];
                     let title = '';
                     if (key === 'min_densidad') {
-                        title = 'Min. densidad';
+                        title = 'Minimizando densidad';
+                        desc = 'foo';
                     } else if (key === 'min_hileras') {
-                        title = 'Min. hileras';
+                        title = 'Minimizando hileras';
+                        desc = 'bar';
                     }
                     resultDiv.innerHTML += `
-                        <h3>${title}:</h3>
-                        <p>Densidad: ${item.densidad}</p>
-                        <p>Patrones: ${item.patrones.join(', ')}</p>
+                        <h3>${title}</h3>
+                        <p><b>Densidad:</b> ${item.densidad}</p>
+                        <p><b>Patrones:</b> </p>
                     `;
+                    item.patrones.forEach(pattern => {
+                        const [filled, total] = pattern.split('/').map(Number);
+                        let dotString = '';
+                        for (let j = 0; j < 3; j++) { // Repeat pattern 3 times
+                            dotString += '<div class="row">';
+                            for (let i = 0; i < total; i++) {
+                                if (i < filled) {
+                                    dotString += '<span class="dot filled"></span>';
+                                } else {
+                                    dotString += '<span class="dot"></span>';
+                                }
+                            }
+                            dotString += '</div>';
+                        }
+                        resultDiv.innerHTML += `
+                            <div class="pattern-container">
+                                <p>${pattern} </p>
+                                <div class="pattern">${dotString}</div><p style="color: LightGray">...</p>
+                            </div>
+                        `;
+                    });
                 });
             });
         });
