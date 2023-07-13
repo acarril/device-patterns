@@ -43,8 +43,11 @@ class Pattern:
                 d (int): Number of installed devices.
             """            
             n = len(R)
-            d = np.sum(np.round(np.array(R)*p/n))
-            return d
+            n_ = np.floor(p/n)  # still haven't thought through what to do if this is not an integer
+            R_frac = [Fraction(f).limit_denominator() for f in R]
+            d_full_pattern = [np.floor((n_)/f.as_integer_ratio()[1])*f.as_integer_ratio()[0] for f in R_frac]
+            d_partial_pattern = [min(np.mod(n_, f[1]), f[0]) for f in [f.as_integer_ratio() for f in R_frac]]
+            return int(np.sum(d_full_pattern) + np.sum(d_partial_pattern))
         
         all_R = self.gen_solution_space()
         X = []
