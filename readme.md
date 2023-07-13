@@ -1,9 +1,15 @@
 # Distribución óptima de dispositivos de feromonas en plantaciones
 
 Este repositorio contiene código de Python que implementa un algoritmo para encontrar patrones de distribución óptimos de dispositivos de feromonas en plantaciones.
-El problema a resolver y la solución implementada se detallan en [este documento](./device_patterns.ipynb).
+El problema a resolver y la solución implementada se detallan en [`device_patterns.ipynb`](./device_patterns.ipynb).
 
-Adicionalmente, se implementa una API que permite ejecutar el algoritmo y obtener los resultados en formato JSON. La API puede consumirse directamente, o a través de una interfaz web en https://acarril.github.io/device-patterns.
+Adicionalmente, se implementa una API que permite ejecutar el algoritmo y obtener los resultados en formato JSON.
+La API puede consumirse directamente, o a través de una interfaz web en https://acarril.github.io/device-patterns.
+
+## Instalación
+
+Clonar este repositorio localmente y crear un entorno virtual con versión de Python indicada en [`.python-version`](./.python-version).
+Las dependencias del proyecto se encuentran en [requirements.txt](./requirements.txt), y pueden instalarse con `pip install -r requirements.txt`.
 
 ## API
 
