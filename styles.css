@@ -12,18 +12,12 @@ body {
     height: 100vh;
 }
 header, main {
-    width: 80%; /* you can adjust the value to what best suits you */
-    max-width: 800px; /* adjust this too as per your needs */
+    width: 80%;
+    max-width: 800px;
 }
 header {
     margin-bottom: 1em;
     text-align: left;
-}
-.content-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
 }
 form {
     background-color: #ffffff;
@@ -58,64 +52,56 @@ input[type="submit"]:hover {
     width: 100%;
     max-width: 600px;
 }
-
-
 .dot {
     display: inline-block;
     margin: 2px;
     width: 10px;
     height: 10px;
-    background-color: #ccc; /* grey */
+    background-color: #ccc;
     border-radius: 50%;
-    flex: 1 0 auto; /* This allows the dot to take up as much space as available, but not to shrink smaller than its content */
+    flex: 1 0 auto;
 }
 .filled {
-    background-color: #000; /* black */
+    background-color: #000;
 }
-
-.pattern {
-    display: flex;
-    text-align: left;
-}
-
-
-
-
-/* .pattern {
-    margin-top: 1em;
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: left;
-} */
-
-/* 
-.pattern {
-    align-items: flex-start;
-    justify-content: flex-start;
-} */
-
-
-/* .row {
-    display: flex;
-    justify-content: start;
-    flex-wrap: wrap;
-} */
-
-.row {
-    display: inline-block;
-}
-
 .pattern-container {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 1em;
 }
-
+.pattern {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5em;
+}
+.pattern .row {
+    display: flex;
+}
 .pattern-container p {
     display: inline-block;
-    margin-right: 30px; /* Adjust this to your liking */
-    margin-top: 8px;
-    margin-bottom: 8px;
-    vertical-align: top;
+    width: 60px;
+    text-align: right;
+    margin-right: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+.dots {
+    color: LightGray;
+    font-size: 1em;
 }
 
+@media (max-width: 600px) {
+    body {
+      padding-top: 1em;
+    }
+    header, main {
+      width: 95%;
+    }
+    input[type="number"] {
+      width: 100%;
+    }
+    #result {
+      font-size: 0.9em;
+    }
+  }

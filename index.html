@@ -1,83 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Patrones de distribución óptima de dispositivos en plantaciones</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
-<body>
-    <header>
-        <h1>Patrones de distribución óptima de dispositivos en plantaciones</h1>
-        <p>Más información en <a href="https://github.com/acarril/device-patterns" target="_blank">https://github.com/acarril/device-patterns</a></p>
-    </header>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Patrones de distribución óptima de dispositivos en plantaciones</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>Patrones de distribución óptima de dispositivos en plantaciones</h1>
+            <p>Más información en <a href="https://github.com/acarril/device-patterns" target="_blank">https://github.com/acarril/device-patterns</a></p>
+        </header>
 
-    <main>
-        <form id="api-form">
-            <label for="p">Plantas:</label>
-            <input type="number" id="p" name="p" placeholder="Número de plantas" required>
-            <label for="d_min">Densidad:</label>
-            <input type="number" id="d_min" name="d_min" placeholder="Densidad mínima" required>
-            <input type="submit" value="Calcular">
-        </form>
-        <section id="result">
-            <!-- Results will be populated here -->
-        </section>
-    </main>
+        <main>
+            <form id="api-form">
+                <label for="p">Plantas:</label>
+                <input type="number" id="p" name="p" placeholder="Número de plantas" required>
+                <label for="d_min">Densidad:</label>
+                <input type="number" id="d_min" name="d_min" placeholder="Densidad mínima" required>
+                <input type="submit" value="Calcular">
+            </form>
+            <section id="result">
+                <!-- Results will be populated here -->
+            </section>
+        </main>
 
-    <script>
-        document.getElementById('api-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // prevent the form from being submitted normally
-            const p = document.getElementById('p').value;
-            const d_min = document.getElementById('d_min').value;
-    
-            fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    p: p,
-                    d_min: d_min
+        <script>
+            document.getElementById('api-form').addEventListener('submit', function(event) {
+                event.preventDefault(); // prevent the form from being submitted normally
+                const p = document.getElementById('p').value;
+                const d_min = document.getElementById('d_min').value;
+        
+                fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        p: p,
+                        d_min: d_min
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const resultDiv = document.getElementById('result');
-                resultDiv.innerHTML = '<h2>Soluciones</h2>';
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = '<h2>Resultados</h2>';
 
-                ['min_densidad', 'min_hileras'].forEach(key => {
-                    const item = data[key];
-                    let title = '';
-                    if (key === 'min_densidad') {
-                        title = 'Min. densidad';
-                    } else if (key === 'min_hileras') {
-                        title = 'Min. hileras';
-                    }
-                    resultDiv.innerHTML += `
-                        <h3>${title}</h3>
-                        <p><b>Densidad estimada:</b> ${item.densidad}</p>
-                        <p><b>Hileras:</b> </p>
-                    `;
-                    item.patrones.forEach(pattern => {
-                        const [filled, total] = pattern.split('/').map(Number);
-                        let dotString = '';
-                        for (let i = 0; i < 20; i++) {
-                            const shouldFill = i % total < filled;
-                            if (shouldFill) {
-                                dotString += '<span class="dot filled"></span>';
-                            } else {
-                                dotString += '<span class="dot"></span>';
-                            }
+                    ['min_densidad', 'min_hileras'].forEach(key => {
+                        const item = data[key];
+                        let title = '';
+                        if (key === 'min_densidad') {
+                            title = 'Min. densidad';
+                        } else if (key === 'min_hileras') {
+                            title = 'Min. hileras';
                         }
                         resultDiv.innerHTML += `
-                            <div class="pattern-container">
-                                <p>${pattern}:</p>
-                                <div class="pattern">${dotString}</div><p style="color: LightGray">...</p></div>
-                            </div>
+                            <h3>${title}:</h3>
+                            <p>Densidad: ${item.densidad}</p>
                         `;
+                        item.patrones.forEach(pattern => {
+                            let [filled, total] = pattern.split('/').map(Number);
+                            if(isNaN(total)) {
+                                total = 1;
+                            }
+                            let dotString = '';
+                            for (let i = 0; i < 20; i++) {
+                                const shouldFill = i % total < filled;
+                                if (shouldFill) {
+                                    dotString += '<span class="dot filled"></span>';
+                                } else {
+                                    dotString += '<span class="dot"></span>';
+                                }
+                            }
+                            resultDiv.innerHTML += `
+                                <div class="pattern-container">
+                                    <p>${pattern}:</p>
+                                    <div class="pattern">${dotString}<span class="dots">...</span></div>
+                                </div>
+                            `;
+                        });
                     });
                 });
             });
-        });
-    </script>
-</body>
-</html>
+        </script>
+    </body>
+    </html>
