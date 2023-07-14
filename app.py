@@ -42,8 +42,6 @@ def index():
 def get_solutions():
     # Fetch query params
     req_body = app.current_request.json_body
-    # Convert values of req_body to int
-    req_body = {k: int(v) for k, v in req_body.items()}
     # Instantiate Pattern class
     pattern = Pattern(**req_body)
     # Find optimal solutions

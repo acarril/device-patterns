@@ -5,14 +5,14 @@ from fractions import Fraction
 class Pattern:
     def __init__(self, p, d_min, n_max=8
                  , tolerance_factor=1.5, sag_compliant=True):
-        self.p = p
-        self.d_min = d_min
-        self.n_max = n_max  # maximum number of hileras
-        self.tolerance_factor = tolerance_factor    # tolerance factor for max density
-        self.sag_compliant = sag_compliant  # whether to use sag-compliant patterns or not
+        self.p = int(p)
+        self.d_min = int(d_min)
+        self.n_max = int(n_max)  # maximum number of hileras
+        self.tolerance_factor = float(tolerance_factor)    # tolerance factor for max density
+        self.sag_compliant = bool(int(sag_compliant))  # whether to use sag-compliant patterns or not
 
         # Patterns
-        if sag_compliant:
+        if self.sag_compliant:
             self.patterns = [1/i for i in range(1, 11)] + [0.0]
         else:
             self.patterns = [1.0, 4/5, 2/3, 3/5] + [1/i for i in range(2, 6)]
@@ -88,4 +88,3 @@ class Pattern:
             sol_min_h_n = (sol_min_h_n[0], self.convert2fractions(sol_min_h_n[1]))
             sol_min_d = (sol_min_d[0], self.convert2fractions(sol_min_d[1]))
         return sol_min_h_n, sol_min_d
-    
