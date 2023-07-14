@@ -3,13 +3,20 @@ from itertools import combinations_with_replacement
 from fractions import Fraction
 
 class Pattern:
-    def __init__(self, p, d_min, n_max=4, tolerance_factor=1.1):
+    def __init__(self, p, d_min, n_max=8
+                 , tolerance_factor=1.5, sag_compliant=True):
         self.p = p
         self.d_min = d_min
         self.n_max = n_max  # maximum number of hileras
         self.tolerance_factor = tolerance_factor    # tolerance factor for max density
+        self.sag_compliant = sag_compliant  # whether to use sag-compliant patterns or not
 
-        self.patterns = [1.0, 4/5, 2/3, 3/5] + [1/i for i in range(2, 6)]
+        # Patterns
+        if sag_compliant:
+            self.patterns = [1/i for i in range(1, 11)] + [0.0]
+        else:
+            self.patterns = [1.0, 4/5, 2/3, 3/5] + [1/i for i in range(2, 6)]
+
         self.X = self.compute_densities_over_solution_space()
 
     def convert2fractions(self, x):
@@ -26,6 +33,20 @@ class Pattern:
             return combinations
         
         all_R = generate_combinations(self.patterns, self.n_max)
+        
+        # Filter out solutions that are not SAG-compliant
+        if self.sag_compliant:
+            filtered_combinations = []
+            for R in all_R:
+                R_unique = set(R)
+                if len(R_unique) <= 2:
+                    indexes = tuple(self.patterns.index(r) for r in R_unique)
+                    indexes_diff = max(indexes) - min(indexes)
+                    if abs(indexes_diff) <= 1:
+                        filtered_combinations.append(R)\
+            
+            all_R = filtered_combinations
+
         return all_R
 
 
