@@ -63,6 +63,7 @@ input[type="submit"]:hover {
 }
 
 .dot {
+    display: inline-block;
     margin: 2px;
     width: 10px;
     height: 10px;
@@ -100,6 +101,7 @@ input[type="submit"]:hover {
 
 #loader {
     display: none;
+    margin-top: 20px;
 }
 
 .loading-dot {
@@ -120,6 +122,10 @@ input[type="submit"]:hover {
 
 .form-group {
     width: 45%; /* roughly half the form width */
+}
+
+#api-form input[type="submit"] {
+    width: auto;
 }
 
 @media (max-width: 600px) {
