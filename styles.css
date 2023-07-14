@@ -11,24 +11,29 @@ body {
     padding-top: 3em;
     height: 100vh;
 }
+
 header, main {
     width: 80%;
     max-width: 800px;
 }
+
 header {
     margin-bottom: 1em;
     text-align: left;
 }
+
 form {
     background-color: #ffffff;
     border: 1px solid #e1e4e8;
     padding: 1em;
     border-radius: 6px;
 }
+
 label, input {
     display: block;
     margin-bottom: 0.5em;
 }
+
 input[type="number"] {
     width: 100%;
     box-sizing: border-box;
@@ -36,6 +41,7 @@ input[type="number"] {
     border: 1px solid #e1e4e8;
     border-radius: 6px;
 }
+
 input[type="submit"] {
     background-color: #28a745;
     color: #ffffff;
@@ -44,14 +50,17 @@ input[type="submit"] {
     border-radius: 6px;
     cursor: pointer;
 }
+
 input[type="submit"]:hover {
     background-color: #218839;
 }
+
 #result {
     margin-top: 2em;
     width: 100%;
     max-width: 600px;
 }
+
 .dot {
     display: inline-block;
     margin: 2px;
@@ -61,23 +70,24 @@ input[type="submit"]:hover {
     border-radius: 50%;
     flex: 1 0 auto;
 }
+
 .filled {
     background-color: #000;
 }
+
 .pattern-container {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     margin-bottom: 1em;
 }
+
 .pattern {
     display: flex;
     align-items: center;
     margin-right: 0.5em;
 }
-.pattern .row {
-    display: flex;
-}
+
 .pattern-container p {
     display: inline-block;
     width: 60px;
@@ -86,9 +96,24 @@ input[type="submit"]:hover {
     margin-top: 0px;
     margin-bottom: 0px;
 }
+
 .dots {
     color: LightGray;
     font-size: 1em;
+}
+
+#loader {
+    display: none;
+}
+
+.loading-dot {
+    font-size: 1em;
+}
+
+@keyframes loading {
+    0% { color: #000; }
+    50% { color: #bbb; }
+    100% { color: #000; }
 }
 
 @media (max-width: 600px) {
@@ -104,4 +129,4 @@ input[type="submit"]:hover {
     #result {
       font-size: 0.9em;
     }
-  }
+}
