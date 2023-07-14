@@ -12,7 +12,7 @@ body {
     height: 100vh;
 }
 
-header, main {
+header, main, #result {
     width: 80%;
     max-width: 800px;
 }
@@ -34,20 +34,18 @@ label, input {
     margin-bottom: 0.5em;
 }
 
-input[type="number"] {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0.5em;
+input[type="number"], input[type="submit"] {
     border: 1px solid #e1e4e8;
     border-radius: 6px;
+    padding: 0.5em;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 input[type="submit"] {
     background-color: #28a745;
     color: #ffffff;
     border: none;
-    padding: 0.5em 1em;
-    border-radius: 6px;
     cursor: pointer;
 }
 
@@ -57,12 +55,14 @@ input[type="submit"]:hover {
 
 #result {
     margin-top: 2em;
-    width: 100%;
-    max-width: 600px;
+}
+
+.dot, .pattern-container {
+    display: flex;
+    align-items: center;
 }
 
 .dot {
-    display: inline-block;
     margin: 2px;
     width: 10px;
     height: 10px;
@@ -76,15 +76,11 @@ input[type="submit"]:hover {
 }
 
 .pattern-container {
-    display: flex;
-    align-items: center;
     justify-content: flex-start;
     margin-bottom: 1em;
 }
 
 .pattern {
-    display: flex;
-    align-items: center;
     margin-right: 0.5em;
 }
 
@@ -116,17 +112,31 @@ input[type="submit"]:hover {
     100% { color: #000; }
 }
 
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+
+.form-group {
+    width: 45%; /* roughly half the form width */
+}
+
 @media (max-width: 600px) {
     body {
       padding-top: 1em;
     }
-    header, main {
+    header, main, input[type="number"] {
       width: 95%;
-    }
-    input[type="number"] {
-      width: 100%;
     }
     #result {
       font-size: 0.9em;
+      width: 100%;
+    }
+    .form-row {
+        flex-direction: column;
+    }
+    .form-group {
+        width: 100%;
     }
 }
