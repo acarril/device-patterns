@@ -53,6 +53,14 @@ input[type="submit"]:hover {
     background-color: #218839;
 }
 
+.description {
+    color: gray;
+    font-size: 0.9em;
+    margin-top: 0.25em;
+    margin-bottom: 0.75em;
+}
+
+
 #result {
     margin-top: 2em;
 }
