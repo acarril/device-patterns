@@ -27,14 +27,14 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="d_min">Densidad mínima:</label>
+                        <label for="d_min">Dosis mínima:</label>
                         <p class="description">Número mínimo de dispositivos a instalar</p>
-                        <input type="number" id="d_min" name="d_min" placeholder="Densidad mínima" required>
+                        <input type="number" id="d_min" name="d_min" placeholder="Dosis mínima" required>
                     </div>
                     <div class="form-group">
-                        <label for="tolerance_factor">Factor max. densidad:</label>
-                        <p class="description">Factor de expansión para máxima densidad permitida en la optimización</p>
-                        <input type="number" id="tolerance_factor" name="tolerance_factor" placeholder="Factor máximo de densidad" value=1.2 required>
+                        <label for="tolerance_factor">Factor max. dosis:</label>
+                        <p class="description">Factor de expansión para máxima dosis permitida en la optimización</p>
+                        <input type="number" id="tolerance_factor" name="tolerance_factor" placeholder="Factor máximo de dosis" value=1.2 required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -97,13 +97,13 @@
                         const item = data[key];
                         let title = '';
                         if (key === 'min_densidad') {
-                            title = 'Min. densidad';
+                            title = 'Min. dosis';
                         } else if (key === 'min_hileras') {
                             title = 'Min. hileras';
                         }
                         resultDiv.innerHTML += `
                             <h3>${title}:</h3>
-                            <p>Densidad: ${item.densidad}</p>
+                            <p>Dosis: ${item.densidad}</p>
                         `;
                         item.patrones.forEach(pattern => {
                             let [filled, total] = pattern.split('/').map(Number);
