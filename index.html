@@ -72,7 +72,7 @@
                 const n_max = document.getElementById('n_max').value;
                 const tolerance_factor = document.getElementById('tolerance_factor').value;
                 const sag_compliant = document.getElementById('sag_compliant').checked ? 1 : 0;
-        
+
                 fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
                     method: 'POST',
                     headers: {
@@ -105,6 +105,7 @@
                             <h3>${title}:</h3>
                             <p>Dosis: ${item.densidad}</p>
                         `;
+                        let offset = 0;
                         item.patrones.forEach(pattern => {
                             let [filled, total] = pattern.split('/').map(Number);
                             if(isNaN(total)) {
@@ -112,7 +113,7 @@
                             }
                             let dotString = '';
                             for (let i = 0; i < 20; i++) {
-                                const shouldFill = i % total < filled;
+                                const shouldFill = (i + offset) % total < filled;
                                 if (shouldFill) {
                                     dotString += '<span class="dot filled"></span>';
                                 } else {
@@ -125,6 +126,7 @@
                                     <div class="pattern">${dotString}<span class="dots">...</span></div>
                                 </div>
                             `;
+                            offset += 1;
                         });
                     });
                 });
