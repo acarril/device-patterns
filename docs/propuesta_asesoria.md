@@ -23,7 +23,7 @@ Se detallan las horas de trabajo y/o desarrollo junto con el costo asociado a ca
 
 ## Entregables
 
-Al tratarse de un proyecto de _software_, todo el material a entregar se reunirá en el repositorio Github del proyecto, el cual se encuentra en la siguiente dirección: https://github.com/acarril/device-patterns.
+Al tratarse de un proyecto de _software_, todo el material a entregar se reunirá en el repositorio Github del proyecto.
 
 1. El modelamiento matemático del problema junto con la descripción del algoritmo de optimización se entregará en un documento en formato Markdown.
 2. El software de optimización se implementará en el lenguaje de programación Python.
