@@ -16,10 +16,10 @@ Se detallan las horas de trabajo y/o desarrollo junto con el costo asociado a ca
 |                             | Horas | Costo (UF) |
 |-----------------------------|------:|-----------:|
 | 1. Modelamiento             |     3 |          9 |
-| 2. Software de optimización |     6 |         18 |
+| 2. Software de optimización |     8 |         24 |
 | 3. REST API                 |     2 |          6 |
 | 4. Front-end                |     3 |          9 |
-| **Total**                   |**14** |     **42** |
+| **Total**                   |**16** |     **48** |
 
 ## Entregables
 
