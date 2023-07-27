@@ -36,14 +36,7 @@
                         <p class="description">Factor de expansión para máxima dosis permitida en la optimización</p>
                         <input type="number" id="tolerance_factor" name="tolerance_factor" placeholder="Factor máximo de dosis" value=1.05 min=1 step="any" required>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="sag_compliant">Restricciones SAG:</label>
-                        <p class="description">Restringe rango de ratios (i.e. patrones) permitidos</p>
-                        <input type="checkbox" id="sag_compliant" name="sag_compliant" value="1">
-                    </div>
-                </div>                
+                </div>              
                 <input type="submit" value="Calcular">
             </form>
             <div id="loader" class="loader">
@@ -71,7 +64,7 @@
                 const d_min = document.getElementById('d_min').value;
                 const n_max = document.getElementById('n_max').value;
                 const tolerance_factor = document.getElementById('tolerance_factor').value;
-                const sag_compliant = document.getElementById('sag_compliant').checked ? 1 : 0;
+                const sag_compliant = 1; // Always send as checked
 
                 fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
                     method: 'POST',
