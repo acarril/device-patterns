@@ -10,14 +10,23 @@ class Pattern:
         self.n_max = int(n_max)  # maximum number of hileras
         self.tolerance_factor = float(tolerance_factor)    # tolerance factor for max density
         self.sag_compliant = bool(int(sag_compliant))  # whether to use sag-compliant patterns or not
-
-        # Patterns
-        if self.sag_compliant:
-            self.patterns = [1/i for i in range(1, 11)] + [0.0]
-        else:
-            self.patterns = [1.0, 4/5, 2/3, 3/5] + [1/i for i in range(2, 6)]
-
+        self.patterns = self.gen_patterns()
         self.X = self.compute_densities_over_solution_space()
+
+    def gen_patterns(self):
+        """Generate list of admissible patterns."""
+        r = self.d_min/self.p
+        # Patterns for r <= 1
+        if r <= 1:
+            if self.sag_compliant:
+                patterns = [1/i for i in range(1, 11)] + [0.0]
+            else:
+                patterns = [1.0, 4/5, 2/3, 3/5] + [1/i for i in range(2, 6)]
+        # Patterns for r > 1
+        if r > 1:
+            # patterns = [1.0, 5/4, 4/3, 3/2, 5/3, 2.0]
+            patterns = [f + np.floor(r) for f in [0.0, 1/4, 1/3, 1/2, 2/3, 1.0]]
+        return patterns
 
     def convert2fractions(self, x):
         return [str(Fraction(i).limit_denominator()) for i in x]
@@ -45,7 +54,7 @@ class Pattern:
                     indexes = tuple(self.patterns.index(r) for r in R_unique)
                     indexes_diff = max(indexes) - min(indexes)
                     if abs(indexes_diff) <= 1:
-                        filtered_combinations.append(R)\
+                        filtered_combinations.append(R)
             
             all_R = filtered_combinations
 
