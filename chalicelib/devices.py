@@ -35,6 +35,8 @@ class Pattern:
         all_R = generate_combinations(self.patterns, self.n_max)
         
         # Filter out solutions that are not SAG-compliant
+        # SAG-compliant solutions must use (i) no more than 2 patterns,
+        # and (ii) the patterns must be consecutive in the list of patterns
         if self.sag_compliant:
             filtered_combinations = []
             for R in all_R:
