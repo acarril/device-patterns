@@ -2,12 +2,12 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Patrones de distribución óptima de dispositivos en plantaciones</title>
+        <title>Patrones de distribución óptima de emisores en plantaciones</title>
         <link rel="stylesheet" type="text/css" href="styles.css">
     </head>
     <body>
         <header>
-            <h1>Patrones de distribución óptima de dispositivos en plantaciones</h1>
+            <h1>Patrones de distribución óptima de emisores en plantaciones</h1>
             <p>Más información en <a href="https://github.com/acarril/device-patterns" target="_blank">https://github.com/acarril/device-patterns</a></p>
         </header>
 
@@ -28,7 +28,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="d_min">Dosis mínima:</label>
-                        <p class="description">Número mínimo de dispositivos a instalar</p>
+                        <p class="description">Número mínimo de emisores a instalar</p>
                         <input type="number" id="d_min" name="d_min" placeholder="Dosis mínima" required>
                     </div>
                     <div class="form-group">
@@ -145,12 +145,12 @@
 
             // Helper function to generate pattern text
             function generatePatternText(indices, pattern) {
-                let deviceText = 'dispositivo';
+                let deviceText = 'emisor';
                 let plantText = 'planta';
                 let [numerator, denominator] = pattern.split('/').map(Number);
 
                 // Adjust singular or plural
-                if (numerator > 1) deviceText += 's';
+                if (numerator > 1) deviceText += 'es';
                 if (denominator > 1) plantText += 's';
 
                 // Indices text
