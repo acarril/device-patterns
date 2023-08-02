@@ -13,7 +13,7 @@ body {
 }
 
 header, main, #result {
-    width: 80%;
+    width: 100%;
     max-width: 800px;
 }
 
