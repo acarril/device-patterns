@@ -24,8 +24,7 @@ class Pattern:
                 patterns = [1.0, 4/5, 2/3, 3/5] + [1/i for i in range(2, 6)]
         # Patterns for r > 1
         if r > 1:
-            # patterns = [1.0, 5/4, 4/3, 3/2, 5/3, 2.0]
-            patterns = [f + np.floor(r) for f in [0.0, 1/4, 1/3, 1/2, 2/3, 1.0]]
+            patterns = [np.floor(r), np.ceil(r)]
         return patterns
 
     def convert2fractions(self, x):
