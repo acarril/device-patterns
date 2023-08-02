@@ -22,7 +22,7 @@
                     <div class="form-group">
                         <label for="n_max">Max. hileras:</label>
                         <p class="description">Máximo de hileras permitidas en la optimización</p>
-                        <input type="number" id="n_max" name="n_max" placeholder="Número máximo de hileras" value=6 required>
+                        <input type="number" id="n_max" name="n_max" placeholder="Número máximo de hileras" value=9 required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -114,7 +114,7 @@
                         patternText += generatePatternText(patternIndices, currentPattern) + '.';
 
                         // Add the pattern text representation
-                        resultDiv.innerHTML += `<h3>${title}:</h3><p>${patternText}</p>`;
+                        resultDiv.innerHTML += `<h3>${title}:</h3><p><b>Dosis calculada: </b>${item.densidad}</p><p><b>Instalación: </b>${patternText}</p>`;
 
                         let offset = 0;
                         item.patrones.forEach(pattern => {
