@@ -117,26 +117,32 @@
 
                         let offset = 0;
                         item.patrones.forEach(pattern => {
-                            let [filled, total] = pattern.split('/').map(Number);
-                            if(isNaN(total)) {
-                                total = 1;
-                            }
-                            let dotString = '';
-                            for (let i = 0; i < 20; i++) {
-                                const shouldFill = (i + offset) % total < filled;
-                                if (shouldFill) {
-                                    dotString += '<span class="dot filled"></span>';
-                                } else {
-                                    dotString += '<span class="dot"></span>';
+                            let [numerator, denominator] = pattern.split('/').map(Number);
+                            let atomicPattern;
+                            if (denominator) {
+                                let baseValue = Math.floor(numerator / denominator);
+                                let topOffValue = numerator % denominator;
+                                atomicPattern = new Array(denominator).fill(baseValue);
+                                for(let i=0; i<topOffValue; i++) {
+                                    atomicPattern[i]++;
                                 }
+                            } else {
+                                atomicPattern = [numerator];
                             }
+                            let numberString = '';
+                            for(let i=0; i<20; i++) {
+                                let num = atomicPattern[i % atomicPattern.length];
+                                let classSuffix = num === 0 ? 'zero' : 'nonzero';
+                                numberString += '<span class="number ' + classSuffix + '">' + num + '</span>';
+                            }
+
                             resultDiv.innerHTML += `
                                 <div class="pattern-container">
                                     <p>${pattern}:</p>
-                                    <div class="pattern">${dotString}</div>
+                                    <div class="pattern">${numberString}</div>
                                 </div>
                             `;
-                            offset += filled;
+                            offset += numerator;
                         });
                     });
                 });
