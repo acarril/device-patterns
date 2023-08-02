@@ -116,6 +116,7 @@
                         resultDiv.innerHTML += `<h3>${title}:</h3><p><b>Dosis calculada: </b>${item.densidad}</p><p><b>Instalación: </b>${patternText}</p>`;
 
                         let offset = 0;
+                        let patternCounter = 1;
                         item.patrones.forEach(pattern => {
                             let [numerator, denominator] = pattern.split('/').map(Number);
                             let atomicPattern;
@@ -135,14 +136,16 @@
                                 let classSuffix = num === 0 ? 'zero' : 'nonzero';
                                 numberString += '<span class="number ' + classSuffix + '">' + num + '</span>';
                             }
+                            numberString += '<span style="color: lightgray;">...</span>';
 
                             resultDiv.innerHTML += `
                                 <div class="pattern-container">
-                                    <p>${pattern}:</p>
-                                    <div class="pattern">${numberString}</div>
+                                    <p><b>H${patternCounter} </b>(${pattern}):</p>
+                                    <div class="pattern">${numberString}</div>                             
                                 </div>
                             `;
                             offset += numerator;
+                            patternCounter++; // increment the counter
                         });
                     });
                 });
