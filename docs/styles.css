@@ -107,6 +107,15 @@ input[type="submit"]:hover {
     font-size: 1em;
 }
 
+.dot-number {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 10px;
+}
+
 #loader {
     display: none;
     margin-top: 20px;

@@ -94,28 +94,10 @@
                         } else if (key === 'min_hileras') {
                             title = 'Min. hileras';
                         }
-
-                        // Prepare the patterns for text representation
-                        let currentPattern = '';
-                        let patternIndices = [];
-                        let patternText = '';
-
-                        item.patrones.forEach((pattern, index) => {
-                            if (pattern !== currentPattern) {
-                                if (currentPattern) {
-                                    patternText += generatePatternText(patternIndices, currentPattern) + '; ';
-                                }
-                                currentPattern = pattern;
-                                patternIndices = [index + 1]; // Start from 1 instead of 0
-                            } else {
-                                patternIndices.push(index + 1);
-                            }
-                        });
-                        patternText += generatePatternText(patternIndices, currentPattern) + '.';
-
-                        // Add the pattern text representation
-                        resultDiv.innerHTML += `<h3>${title}:</h3><p>${patternText}</p>`;
-
+                        resultDiv.innerHTML += `
+                            <h3>${title}:</h3>
+                            <p>Dosis: ${item.densidad}</p>
+                        `;
                         let offset = 0;
                         item.patrones.forEach(pattern => {
                             let [filled, total] = pattern.split('/').map(Number);
@@ -134,35 +116,14 @@
                             resultDiv.innerHTML += `
                                 <div class="pattern-container">
                                     <p>${pattern}:</p>
-                                    <div class="pattern">${dotString}</div>
+                                    <div class="pattern">${dotString}<span class="dots">...</span></div>
                                 </div>
                             `;
-                            offset += filled;
+                            offset += 1;
                         });
                     });
                 });
             });
-
-            // Helper function to generate pattern text
-            function generatePatternText(indices, pattern) {
-                let deviceText = 'dispositivo';
-                let plantText = 'planta';
-                let [numerator, denominator] = pattern.split('/').map(Number);
-
-                // Adjust singular or plural
-                if (numerator > 1) deviceText += 's';
-                if (denominator > 1) plantText += 's';
-
-                // Indices text
-                let indicesText = indices.map(index => `H${index}`).join(', ');
-
-                // Pattern text
-                let patternText = denominator
-                    ? `${numerator} ${deviceText} cada ${denominator} ${plantText}`
-                    : `${numerator} ${deviceText} en cada ${plantText}`;
-
-                return `${indicesText}: ${patternText}`;
-            }
         </script>
     </body>
 </html>

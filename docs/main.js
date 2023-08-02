@@ -1,7 +1,6 @@
 document.getElementById('api-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // prevent the form from being submitted normally
+    event.preventDefault();
 
-    // Clear previous results and show the loader
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = '';
     document.getElementById('loader').style.display = 'inline-block';
@@ -10,7 +9,7 @@ document.getElementById('api-form').addEventListener('submit', function(event) {
     const d_min = document.getElementById('d_min').value;
     const n_max = document.getElementById('n_max').value;
     const tolerance_factor = document.getElementById('tolerance_factor').value;
-    const sag_compliant = 1; // Always send as checked
+    const sag_compliant = 1;
 
     fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
         method: 'POST',
@@ -27,7 +26,6 @@ document.getElementById('api-form').addEventListener('submit', function(event) {
     })
     .then(response => response.json())
     .then(data => {
-        // Hide the loader
         document.getElementById('loader').style.display = 'none';
 
         resultDiv.innerHTML = '<h2>Resultados</h2>';
@@ -44,28 +42,40 @@ document.getElementById('api-form').addEventListener('submit', function(event) {
                 <h3>${title}:</h3>
                 <p>Dosis: ${item.densidad}</p>
             `;
-            let offset = 0;
+
             item.patrones.forEach(pattern => {
                 let [filled, total] = pattern.split('/').map(Number);
                 if(isNaN(total)) {
                     total = 1;
                 }
-                let dotString = '';
-                for (let i = 0; i < 20; i++) {
-                    const shouldFill = (i + offset) % total < filled;
-                    if (shouldFill) {
-                        dotString += '<span class="dot filled"></span>';
+
+                const dots = [];
+                let count = filled;
+                while(count > 0) {
+                    if(count >= total) {
+                        dots.push(total);
+                        count -= total;
                     } else {
-                        dotString += '<span class="dot"></span>';
+                        dots.push(count);
+                        count = 0;
                     }
                 }
+
+                let dotString = '';
+                for(let i=0; i<20; i++) {
+                    if(dots[i%dots.length] !== 1) {
+                        dotString += `<span class="dot filled">${dots[i%dots.length]}</span>`;
+                    } else {
+                        dotString += '<span class="dot filled"></span>';
+                    }
+                }
+
                 resultDiv.innerHTML += `
                     <div class="pattern-container">
                         <p>${pattern}:</p>
                         <div class="pattern">${dotString}<span class="dots">...</span></div>
                     </div>
                 `;
-                offset += 1;
             });
         });
     });
