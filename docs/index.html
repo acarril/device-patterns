@@ -83,7 +83,7 @@
                     // Hide the loader
                     document.getElementById('loader').style.display = 'none';
 
-                    resultDiv.innerHTML = '<h2>Resultados</h2>';
+                    resultDiv.innerHTML = '<h1>Resultados</h1>';
 
                     ['min_densidad', 'min_hileras'].forEach(key => {
                         const item = data[key];
@@ -113,10 +113,12 @@
                         patternText += generatePatternText(patternIndices, currentPattern) + '.';
 
                         // Add the pattern text representation
-                        resultDiv.innerHTML += `<h3>${title}:</h3><p><b>Dosis calculada: </b>${item.densidad}</p><p><b>Instalación: </b>${patternText}</p>`;
+                        resultDiv.innerHTML += `<h2>${title}</h2><p><b>Dosis calculada: </b>${item.densidad}</p><p><b>Instalación: </b>${patternText}</p>`;
 
                         let offset = 0;
                         let patternCounter = 1;
+                        let patternsHtml = '<div class="pattern-wrapper">';  // Start a new variable for the patterns HTML
+
                         item.patrones.forEach(pattern => {
                             let [numerator, denominator] = pattern.split('/').map(Number);
                             let atomicPattern;
@@ -142,7 +144,7 @@
                             }
                             numberString += '<span style="color: lightgray;">...</span>';
 
-                            resultDiv.innerHTML += `
+                            patternsHtml += `
                                 <div class="pattern-container">
                                     <p><b>H${patternCounter} </b>(${pattern}):</p>
                                     <div class="pattern">${numberString}</div>                             
@@ -151,6 +153,9 @@
                             offset += numerator;
                             patternCounter++; // increment the counter
                         });
+
+                        patternsHtml += '</div>';  // Close the pattern wrapper div
+                        resultDiv.insertAdjacentHTML('beforeend', patternsHtml);  // Append the patterns HTML to the result div
                     });
                 });
             });
