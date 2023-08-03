@@ -38,6 +38,14 @@ header video {
     flex: 1
 }
 
+.form-header {
+    display: flex;
+    align-items: center; /* This is to align items vertically in the center */
+    justify-content: space-evenly; /* This is to put some space between the video and the title */
+    gap: 0px; /* Optional: puts a gap between the video and the title */
+    margin-bottom: 2rem;
+}
+
 footer {
     font-size: medium;
     color: orange;
