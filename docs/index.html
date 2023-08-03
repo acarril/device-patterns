@@ -130,6 +130,10 @@
                             } else {
                                 atomicPattern = [numerator];
                             }
+
+                            // Rotate the pattern for each pattern, to have it start at different position.
+                            atomicPattern = rotatePattern(atomicPattern, patternCounter - 1);  // -1 because patternCounter is 1-based
+
                             let numberString = '';
                             for(let i=0; i<20; i++) {
                                 let num = atomicPattern[i % atomicPattern.length];
@@ -170,6 +174,13 @@
                     : `${numerator} ${deviceText} en cada ${plantText}`;
 
                 return `${indicesText}: ${patternText}`;
+            }
+
+            // Helper function to rotate an array
+            function rotatePattern(array, rotations) {
+                let length = array.length;
+                rotations = rotations % length;
+                return array.slice(rotations).concat(array.slice(0, rotations));
             }
         </script>
     </body>
