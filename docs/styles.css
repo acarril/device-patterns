@@ -15,18 +15,46 @@ body {
 header, main, #result {
     width: 100%;
     max-width: 800px;
+    font-family: "Noto Sans";
+    font-size: medium;
+    margin-bottom: 80px; 
 }
 
 header {
     margin-bottom: 1em;
-    text-align: left;
+    text-align: right;
+    display: flex;
+    align-items: center;
+}
+
+header h1 {
+    text-align: center;
+    margin: 0;
+    padding-right:30px; /* Add some padding to separate the text from the video */
+    font-family: "Noto Sans";
+}
+
+header video {
+    flex: 1
+}
+
+footer {
+    font-size: medium;
+    color: orange;
+    font-family: "Noto Sans";
+    text-align: center;
+    background-color: #f2f2f2;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
 }
 
 form {
     background-color: #ffffff;
     border: 1px solid #e1e4e8;
     padding: 1em;
-    border-radius: 6px;
+    border-radius: 20px;
 }
 
 label, input {
