@@ -24,20 +24,6 @@ def parse_solutions(solutions: tuple) -> dict:
 def index():
     return {"nikito": "time"}
 
-
-
-# @app.route('/', methods=['GET'], cors=True)
-# def get_solutions():
-#     # Fetch query params
-#     req_body = app.current_request.to_dict()['query_params']
-#     # Convert values of req_body to int
-#     req_body = {k: int(v) for k, v in req_body.items()}
-#     # Instantiate Pattern class
-#     pattern = Pattern(**req_body)
-#     # Find optimal solutions
-#     solutions = pattern.find_optimal_solutions()
-#     return parse_solutions(solutions)
-
 @app.route('/', methods=['POST'], cors=True)
 def get_solutions():
     # Fetch query params
