@@ -3,8 +3,14 @@ from itertools import groupby, combinations_with_replacement
 from fractions import Fraction
 
 class Pattern:
-    def __init__(self, p, d_min, n_max=8
-                 , tolerance_factor=1.5, sag_compliant=True):
+    def __init__(
+            self,
+            p,
+            d_min,
+            n_max=8,
+            tolerance_factor=1.5,
+            sag_compliant=True
+            ):
         self.p = int(p)
         self.d_min = int(d_min)
         self.n_max = int(n_max)  # maximum number of hileras
@@ -73,29 +79,25 @@ class Pattern:
     def compute_densities_over_solution_space(self):
         """Compute real densities (objective function) over solution space.
         """        
-        def compute_real_density(R, p):
+        def compute_real_density(R):
             """Compute the real density of a solution vector R.
 
             Args:
                 R (tuple): Solution vector.
-                p (int): Number of plants.
 
             Returns:
                 d (int): Number of installed devices.
             """            
             n = len(R)
-            n_ = np.floor(p/n)  # still haven't thought through what to do if this is not an integer
-            R_frac = [Fraction(f).limit_denominator() for f in R]
-            d_full_pattern = [np.floor((n_)/f.as_integer_ratio()[1])*f.as_integer_ratio()[0] for f in R_frac]
-            d_partial_pattern = [min(np.mod(n_, f[1]), f[0]) for f in [f.as_integer_ratio() for f in R_frac]]
+            n_ = np.floor(self.p/n)  # still haven't thought through what to do if this is not an integer
+            ratios = [Fraction(f).limit_denominator().as_integer_ratio() for f in R]
+            d_full_pattern = [np.floor((n_)/ratio[1]) * ratio[0] for ratio in ratios]
+            d_partial_pattern = [min(np.mod(n_, ratio[1]), ratio[0]) for ratio in ratios]
             return int(np.sum(d_full_pattern) + np.sum(d_partial_pattern))
         
         all_R = self.gen_solution_space()
-        X = []
-        for R in all_R:
-            d = compute_real_density(R, self.p)
-            X.append((d, R))
-        return X
+        densities = [compute_real_density(R) for R in all_R]
+        return list(zip(densities, all_R))
 
     def find_optimal_solutions(self, fractions=False):
         # Keep only the feasible solutions (within density bounds)
