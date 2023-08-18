@@ -1,5 +1,5 @@
 import numpy as np
-from itertools import combinations_with_replacement
+from itertools import combinations
 from fractions import Fraction
 
 class Pattern:
@@ -35,10 +35,10 @@ class Pattern:
         This function is completely independent of the problem, and just depends on two user-defined parameters: 
         `n_max` (maximum number of patterns) and `patterns` (list of possible patterns)."""                
         def generate_combinations(elements, n):
-            combinations = []
+            all_combinations = []
             for r in range(1, n+1):
-                combinations.extend(combinations_with_replacement(elements, r))
-            return combinations
+                all_combinations.extend(combinations(elements, r))
+            return all_combinations
         
         all_R = generate_combinations(self.patterns, self.n_max)
         
