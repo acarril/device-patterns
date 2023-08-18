@@ -90,10 +90,14 @@ class Pattern:
     def find_optimal_solutions(self, fractions=False):
         # Keep only the feasible solutions (within density bounds)
         solutions = [x for x in self.X if x[0] >= self.d_min and x[0] <= self.d_min*self.tolerance_factor]
+        # Check number of solutions
+        if len(solutions) == 0:
+            return None
         # Get solution with minimum number of patters, and then with minimum density
         sol_min_h_n = sorted(solutions, key=lambda element: (len(element[1]), element[0]))[0]
         # Get solution with minimum density, and then with minimum number of patterns
         sol_min_d = sorted(solutions, key=lambda element: (element[0], len(element[1])))[0]
+        # Convert solutions to fractions if requested
         if fractions:
             sol_min_h_n = (sol_min_h_n[0], self.convert2fractions(sol_min_h_n[1]))
             sol_min_d = (sol_min_d[0], self.convert2fractions(sol_min_d[1]))

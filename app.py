@@ -32,4 +32,8 @@ def get_solutions():
     pattern = Pattern(**req_body)
     # Find optimal solutions
     solutions = pattern.find_optimal_solutions()
-    return parse_solutions(solutions)
+    # Check solutions and parse them accordingly
+    if solutions is None:
+        return None
+    else:
+        return parse_solutions(solutions)

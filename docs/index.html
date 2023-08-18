@@ -77,7 +77,7 @@
 
                 fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
                     method: 'POST',
-                    headers: {
+                    headers: {  
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
@@ -92,6 +92,12 @@
                 .then(data => {
                     // Hide the loader
                     document.getElementById('loader').style.display = 'none';
+
+                    // Check if the response data is null or if the expected keys are not present
+                    if (!data || !data.min_densidad || !data.min_hileras) {
+                        resultDiv.innerHTML = '<h1>Resultados</h1><p>No existe una solución que cumpla con los parámetros ingresados. Intenta aumentar el máximo de hileras permitidas y/o la máxima tolerancia.</p>';
+                        return; // Exit the function early
+                    }
 
                     resultDiv.innerHTML = '<h1>Resultados</h1>';
 
