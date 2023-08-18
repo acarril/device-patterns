@@ -1,5 +1,5 @@
 import numpy as np
-from itertools import combinations
+from itertools import groupby, combinations_with_replacement
 from fractions import Fraction
 
 class Pattern:
@@ -33,31 +33,41 @@ class Pattern:
     def gen_solution_space(self):
         """Generate solution space with all possible combinations of patterns.
         This function is completely independent of the problem, and just depends on two user-defined parameters: 
-        `n_max` (maximum number of patterns) and `patterns` (list of possible patterns)."""                
+        `n_max` (maximum number of patterns) and `patterns` (list of possible patterns)."""
+        
+        def all_equal(iterable):
+            """"Check that all elements of iterable are equal"""
+            g = groupby(iterable)
+            return next(g, True) and not next(g, False)
+                   
         def generate_combinations(elements, n):
+            """Generate all possible combinations of `elements` with up to length `n`."""
             all_combinations = []
             for r in range(1, n+1):
-                all_combinations.extend(combinations(elements, r))
+                all_combinations.extend(combinations_with_replacement(elements, r))
             return all_combinations
         
-        all_R = generate_combinations(self.patterns, self.n_max)
+        # Generate all possible combinations of patterns up to length `n_max`
+        # NOTE: we filter out combinations of length>1 that are all equal
+        all_R = [p for p in generate_combinations(self.patterns, self.n_max) if not len(p)==1 or all_equal(p)]
         
         # Filter out solutions that are not SAG-compliant
         # SAG-compliant solutions must use (i) no more than 2 patterns,
         # and (ii) the patterns must be consecutive in the list of patterns
         if self.sag_compliant:
-            filtered_combinations = []
+            filtered_R = []
             for R in all_R:
                 R_unique = set(R)
                 if len(R_unique) <= 2:
                     indexes = tuple(self.patterns.index(r) for r in R_unique)
                     indexes_diff = max(indexes) - min(indexes)
                     if abs(indexes_diff) <= 1:
-                        filtered_combinations.append(R)
+                        filtered_R.append(R)
             
-            all_R = filtered_combinations
+            return filtered_R
 
-        return all_R
+        else:
+            return all_R
 
 
     def compute_densities_over_solution_space(self):
