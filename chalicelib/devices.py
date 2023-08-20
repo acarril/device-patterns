@@ -1,6 +1,7 @@
 import numpy as np
 from itertools import groupby, combinations_with_replacement
 from fractions import Fraction
+from bisect import bisect_left
 
 class Pattern:
     def __init__(
@@ -33,8 +34,33 @@ class Pattern:
             patterns = [np.floor(r), np.ceil(r)]
         return patterns
 
-    def convert2fractions(self, x):
-        return [str(Fraction(i).limit_denominator()) for i in x]
+    def gen_solution_space_sag(self, r, n_max):
+        def generate_combinations(pair, n_max):
+            if n_max == 1:
+                return [(pair[0],), (pair[1],)]
+            
+            combinations = [(pair[0],), (pair[1],), tuple(pair)]
+            
+            for n in range(3, n_max + 1):
+                for combo in product(pair, repeat=n):
+                    if len(set(combo)) > 1:  # Ensure both numbers are present
+                        combinations.append(combo)
+                        
+            return combinations
+
+        # Find pair of neighboring patterns around r
+        if r <= 1:
+            # Here the tricky part is to leave out patterns ∈ (0.5, 1);
+            # otherwise, we could use the same method as for r > 1
+            patterns = [0.0] + [1/i for i in range(10, 0, -1)]
+            i = bisect_left(patterns, r)
+            pair = (patterns[i], patterns[i-1])
+        elif r > 1:
+            pair = (np.floor(r), np.ceil(r))
+        
+        # Generate all possible combinations of patterns up to length `n_max`
+        return generate_combinations(pair, n_max)
+
 
     def gen_solution_space(self):
         """Generate solution space with all possible combinations of patterns.
