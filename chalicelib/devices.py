@@ -20,6 +20,7 @@ class Pattern:
         self.r = self.d_min/self.p
         self.patterns = self.gen_patterns()
 
+
     def gen_patterns(self):
         """Generate list of admissible patterns."""
         r = self.d_min/self.p
@@ -34,19 +35,26 @@ class Pattern:
             patterns = [np.floor(r), np.ceil(r)]
         return patterns
 
+
     def gen_solution_space_sag(self, r, n_max):
         def generate_combinations(pair, n_max):
-            if n_max == 1:
-                return [(pair[0],), (pair[1],)]
+            a, b = pair
+            result = [(a,), (b,)]
             
-            combinations = [(pair[0],), (pair[1],), tuple(pair)]
+            if n_max == 1:
+                return result
+            
+            result.append((a, b))
             
             for n in range(3, n_max + 1):
-                for combo in product(pair, repeat=n):
-                    if len(set(combo)) > 1:  # Ensure both numbers are present
-                        combinations.append(combo)
+                for i in range(1, n):
+                    # Skip the tuple with equal counts of both numbers for even n_max
+                    if n % 2 == 0 and i == n // 2:
+                        continue
+                    t = (a,) * i + (b,) * (n - i)
+                    result.append(t)
                         
-            return combinations
+            return result
 
         # Find pair of neighboring patterns around r
         if r <= 1:
@@ -116,7 +124,6 @@ class Pattern:
         return solutions
 
 
-
     def find_optimal_solutions(self, solutions, fractions:bool=False):
         def convert2fractions(x):
             return [str(Fraction(i).limit_denominator()) for i in x]
@@ -132,7 +139,8 @@ class Pattern:
             sol_min_h_n = (sol_min_h_n[0], convert2fractions(sol_min_h_n[1]))
             sol_min_d = (sol_min_d[0], convert2fractions(sol_min_d[1]))
         return sol_min_h_n, sol_min_d
-    
+
+
     def run(self):
         solution_space = self.gen_solution_space_sag(self.r, self.n_max) if self.sag_compliant else self.gen_solution_space()
         solutions = self.compute_densities_over_solution_space(solution_space, self.p, self.d_min)
