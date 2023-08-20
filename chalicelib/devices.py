@@ -124,16 +124,23 @@ class Pattern:
         return solutions
 
 
-    def find_optimal_solutions(self, solutions, fractions:bool=False):
+    def find_optimal_solutions(self, solutions, d_max, fractions:bool=False):
         def convert2fractions(x):
             return [str(Fraction(i).limit_denominator()) for i in x]
+        
+        # Filter solutions with density above the maximum
+        filtered_solutions = [sol for sol in solutions if sol[0] <= d_max]
+        
         # Check number of solutions
-        if len(solutions) == 0:
+        if len(solutions) == 0 or len(filtered_solutions) == 0:
             return None
-        # Get solution with minimum number of patters, and then with minimum density
-        sol_min_h_n = sorted(solutions, key=lambda element: (len(element[1]), element[0]))[0]
+        
+        # Get solution with minimum number of patterns, and then with minimum density
+        sol_min_h_n = sorted(filtered_solutions, key=lambda element: (len(element[1]), element[0]))[0]
+       
         # Get solution with minimum density, and then with minimum number of patterns
-        sol_min_d = sorted(solutions, key=lambda element: (element[0], len(element[1])))[0]
+        sol_min_d = sorted(filtered_solutions, key=lambda element: (element[0], len(element[1])))[0]
+        
         # Convert solutions to fractions if requested
         if fractions:
             sol_min_h_n = (sol_min_h_n[0], convert2fractions(sol_min_h_n[1]))
@@ -144,5 +151,5 @@ class Pattern:
     def run(self):
         solution_space = self.gen_solution_space_sag(self.r, self.n_max) if self.sag_compliant else self.gen_solution_space()
         solutions = self.compute_densities_over_solution_space(solution_space, self.p, self.d_min)
-        optimal_sols = self.find_optimal_solutions(solutions)
+        optimal_sols = self.find_optimal_solutions(solutions, self.d_min*self.tolerance_factor)
         return optimal_sols
