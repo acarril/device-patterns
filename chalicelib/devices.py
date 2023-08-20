@@ -17,6 +17,7 @@ class Pattern:
         self.n_max = int(n_max)  # maximum number of hileras
         self.tolerance_factor = float(tolerance_factor)    # tolerance factor for max density
         self.sag_compliant = bool(int(sag_compliant))  # whether to use sag-compliant patterns or not
+        self.r = self.d_min/self.p
         self.patterns = self.gen_patterns()
         self.X = self.compute_densities_over_solution_space()
 
