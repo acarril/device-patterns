@@ -19,7 +19,6 @@ class Pattern:
         self.sag_compliant = bool(int(sag_compliant))  # whether to use sag-compliant patterns or not
         self.r = self.d_min/self.p
         self.patterns = self.gen_patterns()
-        self.X = self.compute_densities_over_solution_space()
 
     def gen_patterns(self):
         """Generate list of admissible patterns."""
@@ -126,9 +125,9 @@ class Pattern:
         densities = [compute_real_density(R) for R in all_R]
         return list(zip(densities, all_R))
 
-    def find_optimal_solutions(self, fractions=False):
-        # Keep only the feasible solutions (within density bounds)
-        solutions = [x for x in self.X if x[0] >= self.d_min and x[0] <= self.d_min*self.tolerance_factor]
+    def find_optimal_solutions(self, solutions, fractions:bool=False):
+        def convert2fractions(x):
+            return [str(Fraction(i).limit_denominator()) for i in x]
         # Check number of solutions
         if len(solutions) == 0:
             return None
@@ -138,6 +137,12 @@ class Pattern:
         sol_min_d = sorted(solutions, key=lambda element: (element[0], len(element[1])))[0]
         # Convert solutions to fractions if requested
         if fractions:
-            sol_min_h_n = (sol_min_h_n[0], self.convert2fractions(sol_min_h_n[1]))
-            sol_min_d = (sol_min_d[0], self.convert2fractions(sol_min_d[1]))
+            sol_min_h_n = (sol_min_h_n[0], convert2fractions(sol_min_h_n[1]))
+            sol_min_d = (sol_min_d[0], convert2fractions(sol_min_d[1]))
         return sol_min_h_n, sol_min_d
+    
+    def run(self):
+        solution_space = self.gen_solution_space_sag(self.r, self.n_max) if self.sag_compliant else self.gen_solution_space()
+        solutions = self.compute_densities_over_solution_space(solution_space, self.p, self.d_min)
+        optimal_sols = self.find_optimal_solutions(solutions)
+        return optimal_sols
