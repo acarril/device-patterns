@@ -6,11 +6,11 @@ from bisect import bisect_left
 class Pattern:
     def __init__(
             self,
-            p,
-            d_min,
-            n_max=8,
-            tolerance_factor=1.5,
-            sag_compliant=True
+            p:int,
+            d_min:int,
+            n_max:int=9,
+            tolerance_factor:float=1.5,
+            sag_compliant:bool=True
             ):
         self.p = int(p)
         self.d_min = int(d_min)
