@@ -104,21 +104,34 @@ class Pattern:
 
     def compute_densities_over_solution_space(self):
         """Compute real densities (objective function) over solution space.
-        """        
-        def compute_real_density(R):
+        """
+
+        def compute_real_density(R, p):
             """Compute the real density of a solution vector R.
 
             Args:
                 R (tuple): Solution vector.
+                p (int): Number of plants.
 
             Returns:
                 d (int): Number of installed devices.
-            """            
+            """
             n = len(R)
-            n_ = np.floor(self.p/n)  # still haven't thought through what to do if this is not an integer
-            ratios = [Fraction(f).limit_denominator().as_integer_ratio() for f in R]
-            d_full_pattern = [np.floor((n_)/ratio[1]) * ratio[0] for ratio in ratios]
-            d_partial_pattern = [min(np.mod(n_, ratio[1]), ratio[0]) for ratio in ratios]
+            n_ = np.floor(p/n)
+            # Convert the entire R to ratios at once
+            numerators = []
+            denominators = []
+            for f in R:
+                num, denom = Fraction(f).limit_denominator().as_integer_ratio()
+                numerators.append(num)
+                denominators.append(denom)
+            # Cast as numpy arrays for vectorized operations
+            numerators = np.array(numerators)
+            denominators = np.array(denominators)
+            # Compute densities of "full" and "partial" patterns
+            d_full_pattern = np.floor(n_ / denominators) * numerators
+            d_partial_pattern = np.minimum(np.mod(n_, denominators), numerators)
+            # Return total density
             return int(np.sum(d_full_pattern) + np.sum(d_partial_pattern))
         
         all_R = self.gen_solution_space()
