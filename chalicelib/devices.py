@@ -133,10 +133,13 @@ class Pattern:
             d_partial_pattern = np.minimum(np.mod(n_, denominators), numerators)
             # Return total density
             return int(np.sum(d_full_pattern) + np.sum(d_partial_pattern))
-        
-        all_R = self.gen_solution_space()
-        densities = [compute_real_density(R) for R in all_R]
-        return list(zip(densities, all_R))
+
+        # Compute densities over solution space and couple them with their corresponding R
+        # NOTE: we immediately filter out solutions with density below the required minimum
+        solutions = [(density, R) for R in solution_space if (density := compute_real_density(R, p)) >= d_min]
+        return solutions
+
+
 
     def find_optimal_solutions(self, solutions, fractions:bool=False):
         def convert2fractions(x):
