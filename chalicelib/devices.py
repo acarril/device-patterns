@@ -16,13 +16,17 @@ class Pattern:
             sag_compliant:bool=True
             ):
         self.p = int(p)
-        self.d_min = int(d_min)
+        self.d_min = self.determine_d_min(int(d_min))
         self.n_max = int(n_max)  # maximum number of hileras
         self.tolerance_factor = float(tolerance_factor)    # tolerance factor for max density
         self.sag_compliant = bool(int(sag_compliant))  # whether to use sag-compliant patterns or not
         self.r = self.d_min/self.p
         self.patterns = self.gen_patterns()
 
+    def determine_d_min(self, d_min):
+        """Determine the minimum number of devices to install."""
+        factor = 1
+        return round(factor * d_min)
 
     def gen_patterns(self):
         """Generate list of admissible patterns."""
