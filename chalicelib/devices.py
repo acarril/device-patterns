@@ -118,9 +118,18 @@ class Pattern:
             # Return total density
             return int(np.sum(d_full_pattern) + np.sum(d_partial_pattern))
 
-        # Compute densities over solution space and couple them with their corresponding R
-        # NOTE: we immediately filter out solutions with density below the required minimum
-        solutions = [(density, R) for R in solution_space if (density := compute_real_density(R, p)) >= d_min]
+        # Determine tolerance_factor_down based on d_min
+        if d_min == 500:
+            tolerance_factor_down = 0.04
+        elif d_min == 1000:
+            tolerance_factor_down = 0.03
+        elif d_min == 50:
+            tolerance_factor_down = 0.06
+        else:
+            tolerance_factor_down = 0.05
+
+        solutions = [(density, R) for R in solution_space if
+                     (density := compute_real_density(R, p)) >= (d_min - (d_min * tolerance_factor_down))]
         return solutions
 
 
