@@ -2,6 +2,9 @@ import numpy as np
 from itertools import combinations_with_replacement, product
 from fractions import Fraction
 from bisect import bisect_left
+from collections import Counter
+from math import gcd
+from functools import reduce
 
 class Pattern:
     def __init__(
@@ -37,24 +40,32 @@ class Pattern:
 
 
     def gen_solution_space_sag(self, r, n_max):
-        def generate_combinations(pair, n_max):
-            a, b = pair
-            result = [(a,), (b,)]
+        def generate_combinations(elements, n_max):
+            # Helper function to calculate the GCD of a list of numbers
+            def find_gcd(list):
+                x = reduce(gcd, list)
+                return x
+
+            # Generate all unique combinations up to length n_max
+            result = set()
+            for n in range(1, n_max + 1):
+                for combo in combinations_with_replacement(elements, n):
+                    # Count elements and reduce their counts by the GCD to find their simplest proportional form
+                    counts = Counter(combo)
+                    gcd_counts = find_gcd(counts.values())
+                    reduced_counts = tuple(sorted((element, count // gcd_counts) for element, count in counts.items()))
+                    # Add the reduced form to the result set to ensure uniqueness
+                    result.add(reduced_counts)
             
-            if n_max == 1:
-                return result
+            # Convert the reduced forms back to the original format (as tuples of elements)
+            final_result = []
+            for reduced in result:
+                combo = []
+                for element, count in reduced:
+                    combo.extend([element] * count)
+                final_result.append(tuple(combo))
             
-            result.append((a, b))
-            
-            for n in range(3, n_max + 1):
-                for i in range(1, n):
-                    # Skip the tuple with equal counts of both numbers for even n_max
-                    if n % 2 == 0 and i == n // 2:
-                        continue
-                    t = (a,) * i + (b,) * (n - i)
-                    result.append(t)
-                        
-            return result
+            return final_result
 
         # Find pair of neighboring patterns around r
         if r <= 1:
