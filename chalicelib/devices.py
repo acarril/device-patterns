@@ -25,8 +25,15 @@ class Pattern:
 
     def determine_d_min(self, d_min):
         """Determine the minimum number of devices to install."""
-        factor = 1
-        return round(factor * d_min)
+        if d_min == 500:
+            factor = 0.04
+        elif d_min == 1000:
+            factor = 0.03
+        elif d_min == 50:
+            factor = 0.06
+        else:
+            factor = 0.05
+        return round((1 - factor) * d_min)
 
     def gen_patterns(self):
         """Generate list of admissible patterns."""
