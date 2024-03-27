@@ -12,7 +12,7 @@ class Pattern:
             p:int,
             d_min:int,
             n_max:int=9,
-            tolerance_factor:float=1.5,
+            tolerance_factor:float=1.05,
             sag_compliant:bool=True
             ):
         self.p = int(p)
@@ -80,16 +80,22 @@ class Pattern:
 
         # Find pair of neighboring patterns around r
         if r <= 1:
-            # Here the tricky part is to leave out patterns ∈ (0.5, 1);
-            # otherwise, we could use the same method as for r > 1
-            patterns = [0.0] + [1/i for i in range(10, 0, -1)]
-            i = bisect_left(patterns, r)
-            pair = (patterns[i], patterns[i-1])
+            # Generate list of patterns that satisfy r <= 1
+            all_patterns = [0.0] + [1/i for i in range(10, 0, -1)]
+            # Find index of r in the list of patterns
+            i = bisect_left(all_patterns, r)
+            # Get the four neighboring patterns around r, avoiding index out of bounds
+            patterns = all_patterns[max(i-1, 0):i+1] + all_patterns[max(i-2, 0):i-1] + all_patterns[i+1:i+2]
         elif r > 1:
-            pair = (np.floor(r), np.ceil(r))
+            # Find two pairs of neighboring patterns around r
+            patterns = (np.floor(r), np.ceil(r), np.floor(r) - 1, np.ceil(r) + 1)
+            # remove patterns below 1, if any
+            patterns = [p for p in patterns if p >= 1]  
         
         # Generate all possible combinations of patterns up to length `n_max`
-        return generate_combinations(pair, n_max)
+        solution_space = generate_combinations(patterns, n_max)
+        solution_space = [s for s in solution_space if len(set(s)) <= 3]
+        return solution_space
 
 
     def gen_solution_space(self):
