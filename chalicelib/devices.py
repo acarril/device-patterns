@@ -89,7 +89,9 @@ class Pattern:
             pair = (np.floor(r), np.ceil(r))
         
         # Generate all possible combinations of patterns up to length `n_max`
-        return generate_combinations(pair, n_max)
+        solution_space = generate_combinations(pair, n_max)
+        solution_space = [s for s in solution_space if len(set(s)) <= 3]
+        return solution_space
 
 
     def gen_solution_space(self):
