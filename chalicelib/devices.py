@@ -12,7 +12,7 @@ class Pattern:
             p:int,
             d_min:int,
             n_max:int=9,
-            tolerance_factor:float=1.5,
+            tolerance_factor:float=1.05,
             sag_compliant:bool=True
             ):
         self.p = int(p)
