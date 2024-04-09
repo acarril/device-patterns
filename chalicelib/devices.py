@@ -176,8 +176,8 @@ class Pattern:
         return sol_min_h_n, sol_min_d
 
 
-    def run(self):
+    def run(self, fractions:bool=False):
         solution_space = self.gen_solution_space_sag(self.r, self.n_max) if self.sag_compliant else self.gen_solution_space()
         solutions = self.compute_densities_over_solution_space(solution_space, self.p, self.d_min)
-        optimal_sols = self.find_optimal_solutions(solutions, self.d_min*self.tolerance_factor)
+        optimal_sols = self.find_optimal_solutions(solutions, self.d_min*self.tolerance_factor, fractions=fractions)
         return optimal_sols
