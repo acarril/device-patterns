@@ -104,7 +104,7 @@ class Pattern:
         """Compute real densities (objective function) over solution space.
         """
 
-        def compute_real_density(R, p):
+        def compute_real_density(R):
             """Compute the real density of a solution vector R.
 
             Args:
@@ -134,7 +134,7 @@ class Pattern:
 
         # Compute densities over solution space and couple them with their corresponding R
         # NOTE: we immediately filter out solutions with density below the required minimum
-        solutions = [(density, R) for R in solution_space if (density := compute_real_density(R, self.p)) >= self.d_min]
+        solutions = [(density, R) for R in solution_space if (density := compute_real_density(R)) >= self.d_min]
         return solutions
 
 
