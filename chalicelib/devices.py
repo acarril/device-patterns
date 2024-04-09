@@ -38,15 +38,21 @@ class Pattern:
 
     def gen_patterns(self):
         """Generate list of admissible patterns."""
-        r = self.r
-        # Patterns for r <= 1
-        if r <= 1:
-            patterns = [1/i for i in range(1, 11)] + [0.0]
-        # Patterns for r > 1
-        if r > 1:
-            patterns = [np.floor(r), np.ceil(r)]
+        # Find pair of neighboring patterns around r
+        if self.r <= 1:
+            # Generate list of patterns that satisfy r <= 1
+            all_patterns = [0.0] + [1/i for i in range(10, 0, -1)]
+            # Find index of r in the list of patterns
+            i = bisect_left(all_patterns, self.r)
+            # Get the four neighboring patterns around r, avoiding index out of bounds
+            patterns = all_patterns[max(i-1, 0):i+1] + all_patterns[max(i-2, 0):i-1] + all_patterns[i+1:i+2]
+        elif self.r > 1:
+            # Find two pairs of neighboring patterns around r
+            patterns = (np.floor(self.r), np.ceil(self.r), np.floor(self.r) - 1, np.ceil(self.r) + 1)
+            # remove patterns below 1, if any
+            patterns = [p for p in patterns if p >= 1]
         return patterns
-
+        
 
     def gen_solution_space(self):
         """Generate solution space with all possible combinations of patterns.
@@ -77,24 +83,10 @@ class Pattern:
                     combo.extend([element] * count)
                 final_result.append(tuple(combo))
             
-            return final_result
-
-        # Find pair of neighboring patterns around r
-        if self.r <= 1:
-            # Generate list of patterns that satisfy r <= 1
-            all_patterns = [0.0] + [1/i for i in range(10, 0, -1)]
-            # Find index of r in the list of patterns
-            i = bisect_left(all_patterns, self.r)
-            # Get the four neighboring patterns around r, avoiding index out of bounds
-            patterns = all_patterns[max(i-1, 0):i+1] + all_patterns[max(i-2, 0):i-1] + all_patterns[i+1:i+2]
-        elif self.r > 1:
-            # Find two pairs of neighboring patterns around r
-            patterns = (np.floor(self.r), np.ceil(self.r), np.floor(self.r) - 1, np.ceil(self.r) + 1)
-            # remove patterns below 1, if any
-            patterns = [p for p in patterns if p >= 1]  
+            return final_result 
         
         # Generate all possible combinations of patterns up to length `n_max`
-        solution_space = generate_combinations(patterns, self.n_max)
+        solution_space = generate_combinations(self.patterns, self.n_max)
         solution_space = [s for s in solution_space if len(set(s)) <= 3]
         return solution_space
 
@@ -166,7 +158,3 @@ class Pattern:
         solutions = self.compute_densities_over_solution_space(solution_space)
         optimal_sols = self.find_optimal_solutions(solutions, fractions=fractions)
         return optimal_sols
-
-
-p = Pattern(744, 500)
-p.run()
