@@ -134,7 +134,8 @@ class Pattern:
 
         # Compute densities over solution space and couple them with their corresponding R
         # NOTE: we immediately filter out solutions with density below the required minimum
-        solutions = [(density, R) for R in solution_space if (density := compute_real_density(R)) >= self.d_min]
+        # solutions = [(density, R) for R in solution_space if (density := compute_real_density(R)) >= self.d_min]
+        solutions = [(compute_real_density(R), R) for R in solution_space]
         return solutions
 
 
@@ -142,10 +143,11 @@ class Pattern:
         def convert2fractions(x):
             return [str(Fraction(i).limit_denominator()) for i in x]
         
-        # Filter solutions with density above the maximum
-        filtered_solutions = [sol for sol in solutions if sol[0] <= self.d_max]
+        # Filter out unfeasible solutions
+        # i.e. those that don't meet the density constraints (d_min, d_max)
+        filtered_solutions = [sol for sol in solutions if (self.d_min <= sol[0] <= self.d_max)]
         
-        # Check number of solutions
+        # Check number of solutions & short circuit if 0
         if len(solutions) == 0 or len(filtered_solutions) == 0:
             return None
         
