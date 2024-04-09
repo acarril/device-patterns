@@ -90,13 +90,6 @@ class Pattern:
         # Filter out solutions with more than `max_unique_patterns` unique patterns
         # i.e. we don't want solutions that have "too many" distinct patterns (e.g. [1/2, 1/3, 1/4, 1/5])
         solution_space = [s for s in solution_space if len(set(s)) <= max_unique_patterns]
-        
-        # Finally, we want to filter solutions that are clearly off the mark from `self.r`
-        # i.e. discard solutions if _all_ patterns are above or below `self.r`
-        # e.g. if `r`==0.67, we don't want solutions that only contain 1/2 and 1/3, because they can't reach 0.67
-        # NOTE: This is a very loose filter, on purpose
-        solution_space = [s for s in solution_space if (min(s) <= self.r <= max(s))]
-
         return solution_space
 
 
