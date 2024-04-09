@@ -14,8 +14,7 @@ class Pattern:
             n_max:int=9,
             tol_hi:float=1.05,
             tol_lo=None,
-            tolerance_factor:float=1.05,
-            sag_compliant:bool=True
+            tolerance_factor:float=1.05
             ):
         self.p = int(p)
         self.d = int(d)
@@ -23,8 +22,6 @@ class Pattern:
         self.d_min = self.determine_d_min(self.d) if tol_lo is None else round(self.d * tol_lo)
         self.d_max = round(self.d * tol_hi)
         self.n_max = int(n_max)  # maximum number of hileras
-        self.tolerance_factor = float(tolerance_factor)    # tolerance factor for max density
-        self.sag_compliant = bool(int(sag_compliant))  # whether to use sag-compliant patterns or not
         self.patterns = self.gen_patterns()
 
     def determine_d_min(self, d):
@@ -44,17 +41,17 @@ class Pattern:
         r = self.r
         # Patterns for r <= 1
         if r <= 1:
-            if self.sag_compliant:
-                patterns = [1/i for i in range(1, 11)] + [0.0]
-            else:
-                patterns = [1.0, 4/5, 2/3, 3/5] + [1/i for i in range(2, 6)]
+            patterns = [1/i for i in range(1, 11)] + [0.0]
         # Patterns for r > 1
         if r > 1:
             patterns = [np.floor(r), np.ceil(r)]
         return patterns
 
 
-    def gen_solution_space_sag(self, r, n_max):
+    def gen_solution_space(self):
+        """Generate solution space with all possible combinations of patterns.
+        This function is completely independent of the problem, and just depends on two user-defined parameters: 
+        `n_max` (maximum number of patterns) and `patterns` (list of possible patterns)."""
         def generate_combinations(elements, n_max):
             # Helper function to calculate the GCD of a list of numbers
             def find_gcd(list):
@@ -83,42 +80,26 @@ class Pattern:
             return final_result
 
         # Find pair of neighboring patterns around r
-        if r <= 1:
+        if self.r <= 1:
             # Generate list of patterns that satisfy r <= 1
             all_patterns = [0.0] + [1/i for i in range(10, 0, -1)]
             # Find index of r in the list of patterns
-            i = bisect_left(all_patterns, r)
+            i = bisect_left(all_patterns, self.r)
             # Get the four neighboring patterns around r, avoiding index out of bounds
             patterns = all_patterns[max(i-1, 0):i+1] + all_patterns[max(i-2, 0):i-1] + all_patterns[i+1:i+2]
-        elif r > 1:
+        elif self.r > 1:
             # Find two pairs of neighboring patterns around r
-            patterns = (np.floor(r), np.ceil(r), np.floor(r) - 1, np.ceil(r) + 1)
+            patterns = (np.floor(self.r), np.ceil(self.r), np.floor(self.r) - 1, np.ceil(self.r) + 1)
             # remove patterns below 1, if any
             patterns = [p for p in patterns if p >= 1]  
         
         # Generate all possible combinations of patterns up to length `n_max`
-        solution_space = generate_combinations(patterns, n_max)
+        solution_space = generate_combinations(patterns, self.n_max)
         solution_space = [s for s in solution_space if len(set(s)) <= 3]
         return solution_space
 
 
-    def gen_solution_space(self):
-        """Generate solution space with all possible combinations of patterns.
-        This function is completely independent of the problem, and just depends on two user-defined parameters: 
-        `n_max` (maximum number of patterns) and `patterns` (list of possible patterns)."""
-                   
-        def generate_combinations(elements, n):
-            """Generate all possible combinations of `elements` with up to length `n`."""
-            all_combinations = []
-            for r in range(1, n+1):
-                all_combinations.extend(combinations_with_replacement(elements, r))
-            return all_combinations
-        
-        # Return all possible combinations of patterns up to length `n_max`
-        return generate_combinations(self.patterns, self.n_max)
-
-
-    def compute_densities_over_solution_space(self, solution_space, p, d_min):
+    def compute_densities_over_solution_space(self, solution_space):
         """Compute real densities (objective function) over solution space.
         """
 
@@ -133,7 +114,7 @@ class Pattern:
                 d (int): Number of installed devices.
             """
             n = len(R)
-            n_ = np.floor(p/n)
+            n_ = np.floor(self.p/n)
             # Convert the entire R to ratios at once
             numerators = []
             denominators = []
@@ -152,16 +133,16 @@ class Pattern:
 
         # Compute densities over solution space and couple them with their corresponding R
         # NOTE: we immediately filter out solutions with density below the required minimum
-        solutions = [(density, R) for R in solution_space if (density := compute_real_density(R, p)) >= d_min]
+        solutions = [(density, R) for R in solution_space if (density := compute_real_density(R, self.p)) >= self.d_min]
         return solutions
 
 
-    def find_optimal_solutions(self, solutions, d_max, fractions:bool=False):
+    def find_optimal_solutions(self, solutions, fractions:bool=False):
         def convert2fractions(x):
             return [str(Fraction(i).limit_denominator()) for i in x]
         
         # Filter solutions with density above the maximum
-        filtered_solutions = [sol for sol in solutions if sol[0] <= d_max]
+        filtered_solutions = [sol for sol in solutions if sol[0] <= self.d_max]
         
         # Check number of solutions
         if len(solutions) == 0 or len(filtered_solutions) == 0:
@@ -181,7 +162,11 @@ class Pattern:
 
 
     def run(self, fractions:bool=False):
-        solution_space = self.gen_solution_space_sag(self.r, self.n_max) if self.sag_compliant else self.gen_solution_space()
-        solutions = self.compute_densities_over_solution_space(solution_space, self.p, self.d_min)
-        optimal_sols = self.find_optimal_solutions(solutions, self.d_max, fractions=fractions)
+        solution_space = self.gen_solution_space()
+        solutions = self.compute_densities_over_solution_space(solution_space)
+        optimal_sols = self.find_optimal_solutions(solutions, fractions=fractions)
         return optimal_sols
+
+
+p = Pattern(744, 500)
+p.run()
