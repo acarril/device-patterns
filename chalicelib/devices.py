@@ -10,34 +10,38 @@ class Pattern:
     def __init__(
             self,
             p:int,
-            d_min:int,
+            d:int,
             n_max:int=9,
+            tol_hi:float=1.05,
+            tol_lo=None,
             tolerance_factor:float=1.05,
             sag_compliant:bool=True
             ):
         self.p = int(p)
-        self.d_min = self.determine_d_min(int(d_min))
+        self.d = int(d)
+        self.r = self.d/self.p
+        self.d_min = self.determine_d_min(self.d) if tol_lo is None else round(self.d * tol_lo)
+        self.d_max = round(self.d * tol_hi)
         self.n_max = int(n_max)  # maximum number of hileras
         self.tolerance_factor = float(tolerance_factor)    # tolerance factor for max density
         self.sag_compliant = bool(int(sag_compliant))  # whether to use sag-compliant patterns or not
-        self.r = self.d_min/self.p
         self.patterns = self.gen_patterns()
 
-    def determine_d_min(self, d_min):
+    def determine_d_min(self, d):
         """Determine the minimum number of devices to install."""
-        if d_min == 500:
-            factor = 0.04
-        elif d_min == 1000:
-            factor = 0.03
-        elif d_min == 50:
-            factor = 0.06
+        if d == 500:
+            tol = 0.04
+        elif d == 1000:
+            tol = 0.03
+        elif d == 50:
+            tol = 0.06
         else:
-            factor = 0.05
-        return round((1 - factor) * d_min)
+            tol = 0.05
+        return round((1 - tol) * d)
 
     def gen_patterns(self):
         """Generate list of admissible patterns."""
-        r = self.d_min/self.p
+        r = self.r
         # Patterns for r <= 1
         if r <= 1:
             if self.sag_compliant:
@@ -179,5 +183,5 @@ class Pattern:
     def run(self, fractions:bool=False):
         solution_space = self.gen_solution_space_sag(self.r, self.n_max) if self.sag_compliant else self.gen_solution_space()
         solutions = self.compute_densities_over_solution_space(solution_space, self.p, self.d_min)
-        optimal_sols = self.find_optimal_solutions(solutions, self.d_min*self.tolerance_factor, fractions=fractions)
+        optimal_sols = self.find_optimal_solutions(solutions, self.d_max, fractions=fractions)
         return optimal_sols
