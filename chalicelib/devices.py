@@ -14,7 +14,6 @@ class Pattern:
             n_max:int=9,
             tol_hi:float=1.05,
             tol_lo=None,
-            tolerance_factor:float=1.05
             ):
         self.p = int(p)
         self.d = int(d)
@@ -54,7 +53,7 @@ class Pattern:
         return patterns
         
 
-    def gen_solution_space(self):
+    def gen_solution_space(self, max_unique_patterns:int=3):
         """Generate solution space with all possible combinations of patterns.
         This function is completely independent of the problem, and just depends on two user-defined parameters: 
         `n_max` (maximum number of patterns) and `patterns` (list of possible patterns)."""
@@ -87,7 +86,17 @@ class Pattern:
         
         # Generate all possible combinations of patterns up to length `n_max`
         solution_space = generate_combinations(self.patterns, self.n_max)
-        solution_space = [s for s in solution_space if len(set(s)) <= 3]
+        
+        # Filter out solutions with more than `max_unique_patterns` unique patterns
+        # i.e. we don't want solutions that have "too many" distinct patterns (e.g. [1/2, 1/3, 1/4, 1/5])
+        solution_space = [s for s in solution_space if len(set(s)) <= max_unique_patterns]
+        
+        # Finally, we want to filter solutions that are clearly off the mark from `self.r`
+        # i.e. discard solutions if _all_ patterns are above or below `self.r`
+        # e.g. if `r`==0.67, we don't want solutions that only contain 1/2 and 1/3, because they can't reach 0.67
+        # NOTE: This is a very loose filter, on purpose
+        solution_space = [s for s in solution_space if (min(s) <= self.r <= max(s))]
+
         return solution_space
 
 
