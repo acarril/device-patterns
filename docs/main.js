@@ -9,7 +9,6 @@ document.getElementById('api-form').addEventListener('submit', function(event) {
     const d = document.getElementById('d').value;
     const n_max = document.getElementById('n_max').value;
     const tol_hi = document.getElementById('tol_hi').value;
-    const sag_compliant = 1;
 
     fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
         method: 'POST',
@@ -20,8 +19,7 @@ document.getElementById('api-form').addEventListener('submit', function(event) {
             p: p,
             d: d,
             n_max: n_max,
-            tol_hi: tol_hi,
-            sag_compliant: sag_compliant
+            tol_hi: tol_hi
         })
     })
     .then(response => response.json())
