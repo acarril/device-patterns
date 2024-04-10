@@ -19,7 +19,7 @@ class Pattern:
         self.d = int(d)
         self.r = self.d/self.p
         self.d_min = self.determine_d_min(self.d) if tol_lo is None else round(self.d * tol_lo)
-        self.d_max = round(self.d * tol_hi)
+        self.d_max = round(self.d * float(tol_hi))
         self.n_max = int(n_max)  # maximum number of hileras
         self.patterns = self.gen_patterns()
 
