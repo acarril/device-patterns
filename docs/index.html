@@ -34,14 +34,14 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="d_min">Dosis mínima:</label>
+                        <label for="d">Dosis mínima:</label>
                         <p class="description">Número mínimo de emisores a instalar</p>
-                        <input type="number" id="d_min" name="d_min" placeholder="Dosis mínima" required>
+                        <input type="number" id="d" name="d" placeholder="Dosis mínima" required>
                     </div>
                     <div class="form-group">
-                        <label for="tolerance_factor">Factor max. dosis:</label>
+                        <label for="tol_hi">Factor max. dosis:</label>
                         <p class="description">Máxima tolerancia aceptada para el plan <br>Ej: 1.05 = 5% más de dosis etiqueta</p>
-                        <input type="number" id="tolerance_factor" name="tolerance_factor" placeholder="Factor máximo de dosis" value=1.05 min=1 step="any" required>
+                        <input type="number" id="tol_hi" name="tol_hi" placeholder="Factor máximo de dosis" value=1.05 min=1 step="any" required>
                     </div>
                 </div>              
                 <input type="submit" value="Calcular">
@@ -70,9 +70,9 @@
                 document.getElementById('loader').style.display = 'inline-block';
 
                 const p = document.getElementById('p').value;
-                const d_min = document.getElementById('d_min').value;
+                const d = document.getElementById('d').value;
                 const n_max = document.getElementById('n_max').value;
-                const tolerance_factor = document.getElementById('tolerance_factor').value;
+                const tol_hi = document.getElementById('tol_hi').value;
                 const sag_compliant = 1; // Always send as checked
 
                 fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
@@ -82,9 +82,9 @@
                     },
                     body: JSON.stringify({
                         p: p,
-                        d_min: d_min,
+                        d: d,
                         n_max: n_max,
-                        tolerance_factor: tolerance_factor,
+                        tol_hi: tol_hi,
                         sag_compliant: sag_compliant
                     })
                 })

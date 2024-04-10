@@ -6,9 +6,9 @@ document.getElementById('api-form').addEventListener('submit', function(event) {
     document.getElementById('loader').style.display = 'inline-block';
 
     const p = document.getElementById('p').value;
-    const d_min = document.getElementById('d_min').value;
+    const d = document.getElementById('d').value;
     const n_max = document.getElementById('n_max').value;
-    const tolerance_factor = document.getElementById('tolerance_factor').value;
+    const tol_hi = document.getElementById('tol_hi').value;
     const sag_compliant = 1;
 
     fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
@@ -18,9 +18,9 @@ document.getElementById('api-form').addEventListener('submit', function(event) {
         },
         body: JSON.stringify({
             p: p,
-            d_min: d_min,
+            d: d,
             n_max: n_max,
-            tolerance_factor: tolerance_factor,
+            tol_hi: tol_hi,
             sag_compliant: sag_compliant
         })
     })
