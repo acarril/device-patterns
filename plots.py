@@ -2,11 +2,23 @@ from chalicelib.devices import Pattern
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+
+
+P = range(400, 601, 1)
+solutions = [s.run() for s in [Pattern(p, 500, 12, 1.1) for p in P]]
+X_min_n = np.array([np.array([s[0][0], len(s[0][1])]) if s is not None else (0, 0) for s in solutions ]).transpose()
+gen_eval_plot(P, X_min_n[0], X_min_n[1], 500, 'min. hileras')
+
+
+X_min_n = np.array([np.array([s[0][0], len(s[0][1])]) for s in solutions]).transpose()
+X_min_d = np.array([(s[1][0], len(s[1][1])) for s in solutions]).transpose()
+
 def gen_solutions_linrange(d_min, n_h, tolerance_factor, p_ub=1000):
     P = range(d_min, p_ub, 1)
-    solutions = [s.find_optimal_solutions() for s in [Pattern(p, d_min, n_h, tolerance_factor) for p in P]]
-    X_min_n = np.array([np.array([s[0][0], len(s[0][1])]) for s in solutions]).transpose()
-    X_min_d = np.array([(s[1][0], len(s[1][1])) for s in solutions]).transpose()
+    solutions = [s.run() for s in [Pattern(p, d_min, n_h, tolerance_factor) for p in P]]
+    X_min_n = np.array([np.array([s[0][0], len(s[0][1])]) for s in solutions if s is not None]).transpose()
+    X_min_d = np.array([(s[1][0], len(s[1][1])) for s in solutions if s is not None]).transpose()
     return X_min_n, X_min_d, P
 
 
@@ -26,7 +38,7 @@ def gen_eval_plot(P, D, N, d_min, note=''):
     ax2.set_ylabel('número de hileras (n)', color=color)  # we already handled the x-label with ax1
     ax2.scatter(P, N, color=color, s=1)
     ax2.tick_params(axis='y', labelcolor=color)
-    plt.yticks(np.arange(1, 7, 1))
+    plt.yticks(np.arange(1, 11, 1))
 
     # horizontal line indicating D
     ax1.axhline(y=d_min, color='tab:gray', linestyle='-', alpha=0.5)
@@ -38,9 +50,9 @@ def gen_eval_plot(P, D, N, d_min, note=''):
 
 
 
-X_min_n, X_min_d, P = gen_solutions_linrange(200, 4, 1.1, 600)
+X_min_n, X_min_d, P = gen_solutions_linrange(d_min=500, n_h=4, tolerance_factor=1.1, p_ub=600)
 fig1 = gen_eval_plot(P, X_min_d[0], X_min_d[1], 200, 'min. densidad')
-fig2 = gen_eval_plot(P, X_min_n[0], X_min_n[1], 200, 'min. hileras')
+fig2 = gen_eval_plot(P, X_min_n[0], X_min_n[1], 500, 'min. hileras')
 
 
 
