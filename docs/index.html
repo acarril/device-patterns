@@ -27,23 +27,29 @@
                         <input type="number" id="p" name="p" placeholder="Número de plantas" required>
                     </div>
                     <div class="form-group">
+                        <label for="d">Dosis mínima:</label>
+                        <p class="description">Número mínimo de emisores a instalar</p>
+                        <!-- <input type="number" id="d" name="d" placeholder="Dosis mínima" required> -->
+                        <input type="number" id="d" name="d" placeholder="Dosis mínima" list="d_values" required>
+                        <datalist id="d_values">
+                            <option value=50>50</option>
+                            <option value=200>200</option>
+                            <option value=500>500</option>
+                        </datalist>
+                    </div>
+                </div>
+                <!-- <div class="form-row">
+                    <div class="form-group">
                         <label for="n_max">Max. hileras:</label>
                         <p class="description">Máximo de hileras a trabajar en patrón</p>
                         <input type="number" id="n_max" name="n_max" placeholder="Número máximo de hileras" value=9 min=1 max=16 required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="d">Dosis mínima:</label>
-                        <p class="description">Número mínimo de emisores a instalar</p>
-                        <input type="number" id="d" name="d" placeholder="Dosis mínima" required>
                     </div>
                     <div class="form-group">
                         <label for="tol_hi">Factor max. dosis:</label>
                         <p class="description">Máxima tolerancia aceptada para el plan <br>Ej: 1.05 = 5% más de dosis etiqueta</p>
                         <input type="number" id="tol_hi" name="tol_hi" placeholder="Factor máximo de dosis" value=1.05 min=1 step="any" required>
                     </div>
-                </div>              
+                </div>               -->
                 <input type="submit" value="Calcular">
             </form>
             <div id="loader" class="loader">
@@ -71,8 +77,8 @@
 
                 const p = document.getElementById('p').value;
                 const d = document.getElementById('d').value;
-                const n_max = document.getElementById('n_max').value;
-                const tol_hi = document.getElementById('tol_hi').value;
+                // const n_max = document.getElementById('n_max').value;
+                // const tol_hi = document.getElementById('tol_hi').value;
 
                 fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
                     method: 'POST',
@@ -81,9 +87,7 @@
                     },
                     body: JSON.stringify({
                         p: p,
-                        d: d,
-                        n_max: n_max,
-                        tol_hi: tol_hi
+                        d: d
                     })
                 })
                 .then(response => response.json())
@@ -92,85 +96,78 @@
                     document.getElementById('loader').style.display = 'none';
 
                     // Check if the response data is null or if the expected keys are not present
-                    if (!data || !data.min_densidad || !data.min_hileras) {
-                        resultDiv.innerHTML = '<h1>Resultados</h1><p>No existe una solución que cumpla con los parámetros ingresados. Intenta aumentar el máximo de hileras permitidas y/o la máxima tolerancia.</p>';
+                    if (!data || !data.densidad || !data.patrones || !data.criterio) {
+                        resultDiv.innerHTML = '<h1>Resultado</h1><p>No existe una solución que cumpla con los parámetros ingresados. Intenta aumentar el máximo de hileras permitidas y/o la máxima tolerancia.</p>';
                         return; // Exit the function early
                     }
 
-                    resultDiv.innerHTML = '<h1>Resultados</h1>';
+                    resultDiv.innerHTML = '<h1>Resultado</h1>';
+                    let title = `${data.criterio}`;
 
-                    ['min_hileras', 'min_densidad'].forEach(key => {
-                        const item = data[key];
-                        let title = '';
-                        if (key === 'min_densidad') {
-                            title = 'Min. dosis';
-                        } else if (key === 'min_hileras') {
-                            title = 'Min. hileras';
+                    // Prepare the patterns for text representation
+                    let currentPattern = '';
+                    let patternIndices = [];
+                    let patternText = '';
+
+                    data.patrones.forEach((pattern, index) => {
+                        if (pattern !== currentPattern) {
+                            if (currentPattern) {
+                                patternText += generatePatternText(patternIndices, currentPattern) + '; ';
+                            }
+                            currentPattern = pattern;
+                            patternIndices = [index + 1]; // Start from 1 instead of 0
+                        } else {
+                            patternIndices.push(index + 1);
+                        }
+                    });
+                    patternText += generatePatternText(patternIndices, currentPattern) + '.';
+
+                    // Add the pattern text representation
+                    // resultDiv.innerHTML += `<h2>${title}</h2><p><b>Dosis calculada: </b>${data.densidad}</p><p><b>Instalación: </b>${patternText}</p>`;
+                    resultDiv.innerHTML += `<p><b>Dosis calculada: </b>${data.densidad}</p><p><b>Instalación: </b>${patternText}</p>`;
+
+                    let offset = 0;
+                    let patternCounter = 1;
+                    let patternsHtml = '<div class="pattern-wrapper">';  // Start a new variable for the patterns HTML
+
+                    data.patrones.forEach(pattern => {
+                        let [numerator, denominator] = pattern.split('/').map(Number);
+                        let atomicPattern;
+                        if (denominator) {
+                            let baseValue = Math.floor(numerator / denominator);
+                            let topOffValue = numerator % denominator;
+                            atomicPattern = new Array(denominator).fill(baseValue);
+                            for(let i=0; i<topOffValue; i++) {
+                                atomicPattern[i]++;
+                            }
+                        } else {
+                            atomicPattern = [numerator];
                         }
 
-                        // Prepare the patterns for text representation
-                        let currentPattern = '';
-                        let patternIndices = [];
-                        let patternText = '';
+                        // Rotate the pattern for each pattern, to have it start at different position.
+                        atomicPattern = rotatePattern(atomicPattern, patternCounter - 1);  // -1 because patternCounter is 1-based
 
-                        item.patrones.forEach((pattern, index) => {
-                            if (pattern !== currentPattern) {
-                                if (currentPattern) {
-                                    patternText += generatePatternText(patternIndices, currentPattern) + '; ';
-                                }
-                                currentPattern = pattern;
-                                patternIndices = [index + 1]; // Start from 1 instead of 0
-                            } else {
-                                patternIndices.push(index + 1);
-                            }
-                        });
-                        patternText += generatePatternText(patternIndices, currentPattern) + '.';
+                        let numberString = '';
+                        for(let i=0; i<20; i++) {
+                            let num = atomicPattern[i % atomicPattern.length];
+                            let classSuffix = num === 0 ? 'zero' : 'nonzero';
+                            numberString += '<span class="number ' + classSuffix + '">' + num + '</span>';
+                        }
+                        numberString += '<span style="color: lightgray;">...</span>';
 
-                        // Add the pattern text representation
-                        resultDiv.innerHTML += `<h2>${title}</h2><p><b>Dosis calculada: </b>${item.densidad}</p><p><b>Instalación: </b>${patternText}</p>`;
-
-                        let offset = 0;
-                        let patternCounter = 1;
-                        let patternsHtml = '<div class="pattern-wrapper">';  // Start a new variable for the patterns HTML
-
-                        item.patrones.forEach(pattern => {
-                            let [numerator, denominator] = pattern.split('/').map(Number);
-                            let atomicPattern;
-                            if (denominator) {
-                                let baseValue = Math.floor(numerator / denominator);
-                                let topOffValue = numerator % denominator;
-                                atomicPattern = new Array(denominator).fill(baseValue);
-                                for(let i=0; i<topOffValue; i++) {
-                                    atomicPattern[i]++;
-                                }
-                            } else {
-                                atomicPattern = [numerator];
-                            }
-
-                            // Rotate the pattern for each pattern, to have it start at different position.
-                            atomicPattern = rotatePattern(atomicPattern, patternCounter - 1);  // -1 because patternCounter is 1-based
-
-                            let numberString = '';
-                            for(let i=0; i<20; i++) {
-                                let num = atomicPattern[i % atomicPattern.length];
-                                let classSuffix = num === 0 ? 'zero' : 'nonzero';
-                                numberString += '<span class="number ' + classSuffix + '">' + num + '</span>';
-                            }
-                            numberString += '<span style="color: lightgray;">...</span>';
-
-                            patternsHtml += `
-                                <div class="pattern-container">
-                                    <p><b>H${patternCounter} </b>(${pattern}):</p>
-                                    <div class="pattern">${numberString}</div>                             
-                                </div>
-                            `;
-                            offset += numerator;
-                            patternCounter++; // increment the counter
-                        });
-
-                        patternsHtml += '</div>';  // Close the pattern wrapper div
-                        resultDiv.insertAdjacentHTML('beforeend', patternsHtml);  // Append the patterns HTML to the result div
+                        patternsHtml += `
+                            <div class="pattern-container">
+                                <p><b>H${patternCounter} </b>(${pattern}):</p>
+                                <div class="pattern">${numberString}</div>                             
+                            </div>
+                        `;
+                        offset += numerator;
+                        patternCounter++; // increment the counter
                     });
+
+                    patternsHtml += '</div>';  // Close the pattern wrapper div
+                    resultDiv.insertAdjacentHTML('beforeend', patternsHtml);  // Append the patterns HTML to the result div
+
                 });
             });
 
