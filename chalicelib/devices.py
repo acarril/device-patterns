@@ -1,17 +1,14 @@
 import numpy as np
-from itertools import combinations_with_replacement, product
+from itertools import combinations_with_replacement
 from fractions import Fraction
 from bisect import bisect_left
 from collections import Counter
-from math import gcd
-from functools import reduce
 
 class Pattern:
     def __init__(
             self,
             p:int,
             d:int,
-            n_max:int=9,
             tol_hi:float=1,
             tol_lo=None,
             ):
@@ -20,7 +17,6 @@ class Pattern:
         self.r = self.d/self.p
         self.d_min = self.determine_d_min(self.d) if tol_lo is None else round(self.d * tol_lo)
         self.d_max = round(self.d * float(tol_hi))
-        self.n_max = int(n_max)  # maximum number of hileras
         self.patterns = self.gen_patterns()
 
     def determine_d_min(self, d:int) -> int:
@@ -53,39 +49,28 @@ class Pattern:
         return patterns
         
 
-    def gen_solution_space(self, max_unique_patterns:int=3):
-        """Generate solution space with all possible combinations of patterns.
-        This function is completely independent of the problem, and just depends on two user-defined parameters: 
-        `n_max` (maximum number of patterns) and `patterns` (list of possible patterns)."""
-        def generate_combinations(elements, n_max):
-            # Helper function to calculate the GCD of a list of numbers
-            def find_gcd(list):
-                x = reduce(gcd, list)
-                return x
-
-            # Generate all unique combinations up to length n_max
-            result = set()
-            for n in range(1, n_max + 1):
-                for combo in combinations_with_replacement(elements, n):
-                    # Count elements and reduce their counts by the GCD to find their simplest proportional form
-                    counts = Counter(combo)
-                    gcd_counts = find_gcd(counts.values())
-                    reduced_counts = tuple(sorted((element, count // gcd_counts) for element, count in counts.items()))
-                    # Add the reduced form to the result set to ensure uniqueness
-                    result.add(reduced_counts)
-            
-            # Convert the reduced forms back to the original format (as tuples of elements)
-            final_result = []
-            for reduced in result:
-                combo = []
-                for element, count in reduced:
-                    combo.extend([element] * count)
-                final_result.append(tuple(combo))
-            
-            return final_result 
+    def gen_solution_space(self, n:int, max_unique_patterns:int=3) -> list:
+        """Generate solution space with all admissible combinations of patterns.
+        This function is completely independent of the problem, and just depends on two parameters:
+        A list of unique `patterns` to combine, and the length of the combinations with replacement `n`."""
         
-        # Generate all possible combinations of patterns up to length `n_max`
-        solution_space = generate_combinations(self.patterns, self.n_max)
+        def generate_combinations(elements:list, n:int) -> list:
+            """Generate all possible combinations of values in `elements` of length `n`, removing 'reducible' combinations."""
+            def is_reducible(combination) -> bool:
+                """Determine wether a combination of patterns is 'reducible' or not.
+                A combination is reducible if the count of all elements can be reduced by a common divisor greater than 1.
+                Ex. 1: [1/2, 1/2, 1/3, 1/3] is reducible because both counts can be reduced by 2 --> [1/2, 1/3]."""
+                if len(combination) > 1:
+                    counts = Counter(combination).values()
+                    if 1 not in counts and len(set(counts)) == 1:
+                            return True
+                return False
+
+            combinations = combinations_with_replacement(elements, n)
+            return [combo for combo in combinations if not is_reducible(combo)]
+
+        # Generate all possible non-reducible combinations of patterns of length `n`
+        solution_space = generate_combinations(self.patterns, n)
         
         # Filter out solutions with more than `max_unique_patterns` unique patterns
         # i.e. we don't want solutions that have "too many" distinct patterns (e.g. [1/2, 1/3, 1/4, 1/5])
@@ -124,9 +109,7 @@ class Pattern:
             # Return total density
             return int(np.sum(d_full_pattern) + np.sum(d_partial_pattern))
 
-        # Compute densities over solution space and couple them with their corresponding R
-        # NOTE: we immediately filter out solutions with density below the required minimum
-        # solutions = [(density, R) for R in solution_space if (density := compute_real_density(R)) >= self.d_min]
+        # Compute densities over solution space and couple them with their corresponding solution
         solutions = [(compute_real_density(R), R) for R in solution_space]
         return solutions
 
@@ -156,8 +139,13 @@ class Pattern:
         return sol_min_h_n, sol_min_d
 
 
-    def run(self, fractions:bool=False):
-        solution_space = self.gen_solution_space()
-        solutions = self.compute_densities_over_solution_space(solution_space)
-        optimal_sols = self.find_optimal_solutions(solutions, fractions=fractions)
-        return optimal_sols
+    def run(self, fractions:bool=False) -> tuple:
+        n = 0
+        optimal_solution = None
+        while not optimal_solution:
+            n += 1
+            solution_space = self.gen_solution_space(n)
+            solutions = self.compute_densities_over_solution_space(solution_space)
+            optimal_solution = self.find_optimal_solution(solutions, fractions=fractions)
+
+        return optimal_solution
