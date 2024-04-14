@@ -23,7 +23,7 @@ class Pattern:
         self.n_max = int(n_max)  # maximum number of hileras
         self.patterns = self.gen_patterns()
 
-    def determine_d_min(self, d):
+    def determine_d_min(self, d:int) -> int:
         """Determine the minimum number of devices to install."""
         if d == 500:
             tol = 0.04
@@ -35,7 +35,7 @@ class Pattern:
             tol = 0.05
         return round((1 - tol) * d)
 
-    def gen_patterns(self):
+    def gen_patterns(self) -> list:
         """Generate list of admissible patterns."""
         # Find pair of neighboring patterns around r
         if self.r <= 1:
@@ -93,11 +93,10 @@ class Pattern:
         return solution_space
 
 
-    def compute_densities_over_solution_space(self, solution_space):
-        """Compute real densities (objective function) over solution space.
-        """
+    def compute_densities_over_solution_space(self, solution_space:list) -> list:
+        """Compute real densities (objective function) over solution space."""
 
-        def compute_real_density(R):
+        def compute_real_density(R:tuple) -> int:
             """Compute the real density of a solution vector R.
 
             Args:
@@ -105,7 +104,7 @@ class Pattern:
                 p (int): Number of plants.
 
             Returns:
-                d (int): Number of installed devices.
+                (int): Number of installed devices.
             """
             n = len(R)
             n_ = np.floor(self.p/n)
