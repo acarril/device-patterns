@@ -12,7 +12,7 @@ class Pattern:
             p:int,
             d:int,
             n_max:int=9,
-            tol_hi:float=1.05,
+            tol_hi:float=1,
             tol_lo=None,
             ):
         self.p = int(p)
