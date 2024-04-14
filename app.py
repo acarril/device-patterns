@@ -4,18 +4,19 @@ from fractions import Fraction
 
 app = Chalice(app_name="device_patterns")
 
-def convert2fractions(x):
-    return [str(Fraction(i).limit_denominator()) for i in x]
+def process_solution_patterns(patterns:list) -> list:
+    """Process solution patterns to return them in a sorted list of string fractions."""
+    frac_patterns = sorted([Fraction(pat).limit_denominator() for pat in patterns], reverse=True)
+    return [str(pat) for pat in frac_patterns]
 
 def parse_solutions(optimal_solution: tuple) -> dict:
     # Unpack objects in optimal solution
     computed_d, solution_pattern, criterion = optimal_solution
     # Return parsed solution as JSON/dictionary
     return {
-        criterion: {
             "densidad": computed_d,
-            "patrones": convert2fractions(solution_pattern)
-        }
+            "patrones": process_solution_patterns(solution_pattern),
+            "criterio": criterion
     }
 
 @app.route("/hello",  methods=['GET'], cors=True)
