@@ -150,4 +150,4 @@ class Pattern:
             solutions = self.compute_densities_over_solution_space(solution_space)
             optimal_solution = self.find_optimal_solution(solutions, criterion, fractions)
 
-        return optimal_solution
+        return (*optimal_solution, criterion)

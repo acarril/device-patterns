@@ -7,16 +7,14 @@ app = Chalice(app_name="device_patterns")
 def convert2fractions(x):
     return [str(Fraction(i).limit_denominator()) for i in x]
 
-def parse_solutions(solutions: tuple) -> dict:
-    sol_min_h_n, sol_min_d = solutions
+def parse_solutions(optimal_solution: tuple) -> dict:
+    # Unpack objects in optimal solution
+    computed_d, solution_pattern, criterion = optimal_solution
+    # Return parsed solution as JSON/dictionary
     return {
-        "min_hileras": {
-            "densidad": sol_min_h_n[0],
-            "patrones": convert2fractions(sol_min_h_n[1])
-        },
-        "min_densidad": {
-            "densidad": sol_min_d[0],
-            "patrones": convert2fractions(sol_min_d[1])
+        criterion: {
+            "densidad": computed_d,
+            "patrones": convert2fractions(solution_pattern)
         }
     }
 
@@ -31,9 +29,9 @@ def get_solutions():
     # Instantiate Pattern class
     pattern = Pattern(**req_body)
     # Find optimal solutions
-    solutions = pattern.run()
+    optimal_solution = pattern.run()
     # Check solutions and parse them accordingly
-    if solutions is None:
+    if optimal_solution is None:
         return None
     else:
-        return parse_solutions(solutions)
+        return parse_solutions(optimal_solution)
