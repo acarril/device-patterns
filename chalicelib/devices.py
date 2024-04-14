@@ -114,7 +114,7 @@ class Pattern:
         return solutions
 
 
-    def find_optimal_solutions(self, solutions, fractions:bool=False):
+    def find_optimal_solution(self, solutions:list, criterion:str, fractions:bool) -> tuple:
         def convert2fractions(x):
             return [str(Fraction(i).limit_denominator()) for i in x]
         
@@ -127,25 +127,27 @@ class Pattern:
             return None
         
         # Get solution with minimum number of patterns, and then with minimum density
-        sol_min_h_n = sorted(filtered_solutions, key=lambda element: (len(element[1]), element[0]))[0]
+        if criterion == 'min_h' or criterion is None:
+            optimal_solution = sorted(filtered_solutions, key=lambda element: (len(element[1]), element[0]))[0]
        
         # Get solution with minimum density, and then with minimum number of patterns
-        sol_min_d = sorted(filtered_solutions, key=lambda element: (element[0], len(element[1])))[0]
+        if criterion == 'min_d':
+            optimal_solution = sorted(filtered_solutions, key=lambda element: (element[0], len(element[1])))[0]
         
         # Convert solutions to fractions if requested
         if fractions:
-            sol_min_h_n = (sol_min_h_n[0], convert2fractions(sol_min_h_n[1]))
-            sol_min_d = (sol_min_d[0], convert2fractions(sol_min_d[1]))
-        return sol_min_h_n, sol_min_d
+            optimal_solution = (optimal_solution[0], convert2fractions(optimal_solution[1]))
+        
+        return optimal_solution
 
 
-    def run(self, fractions:bool=False) -> tuple:
+    def run(self, criterion:str='min_h', fractions:bool=False) -> tuple:
         n = 0
         optimal_solution = None
         while not optimal_solution:
             n += 1
             solution_space = self.gen_solution_space(n)
             solutions = self.compute_densities_over_solution_space(solution_space)
-            optimal_solution = self.find_optimal_solution(solutions, fractions=fractions)
+            optimal_solution = self.find_optimal_solution(solutions, criterion, fractions)
 
         return optimal_solution
