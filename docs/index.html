@@ -27,23 +27,29 @@
                         <input type="number" id="p" name="p" placeholder="Número de plantas" required>
                     </div>
                     <div class="form-group">
+                        <label for="d">Dosis mínima:</label>
+                        <p class="description">Número mínimo de emisores a instalar</p>
+                        <!-- <input type="number" id="d" name="d" placeholder="Dosis mínima" required> -->
+                        <input type="number" id="d" name="d" placeholder="Dosis mínima" list="d_values" required>
+                        <datalist id="d_values">
+                            <option value=50>50</option>
+                            <option value=200>200</option>
+                            <option value=500>500</option>
+                        </datalist>
+                    </div>
+                </div>
+                <!-- <div class="form-row">
+                    <div class="form-group">
                         <label for="n_max">Max. hileras:</label>
                         <p class="description">Máximo de hileras a trabajar en patrón</p>
                         <input type="number" id="n_max" name="n_max" placeholder="Número máximo de hileras" value=9 min=1 max=16 required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="d">Dosis mínima:</label>
-                        <p class="description">Número mínimo de emisores a instalar</p>
-                        <input type="number" id="d" name="d" placeholder="Dosis mínima" required>
                     </div>
                     <div class="form-group">
                         <label for="tol_hi">Factor max. dosis:</label>
                         <p class="description">Máxima tolerancia aceptada para el plan <br>Ej: 1.05 = 5% más de dosis etiqueta</p>
                         <input type="number" id="tol_hi" name="tol_hi" placeholder="Factor máximo de dosis" value=1.05 min=1 step="any" required>
                     </div>
-                </div>              
+                </div>               -->
                 <input type="submit" value="Calcular">
             </form>
             <div id="loader" class="loader">
@@ -71,8 +77,8 @@
 
                 const p = document.getElementById('p').value;
                 const d = document.getElementById('d').value;
-                const n_max = document.getElementById('n_max').value;
-                const tol_hi = document.getElementById('tol_hi').value;
+                // const n_max = document.getElementById('n_max').value;
+                // const tol_hi = document.getElementById('tol_hi').value;
 
                 fetch('https://jix6oc21j7.execute-api.us-east-1.amazonaws.com/api/', {
                     method: 'POST',
@@ -91,11 +97,11 @@
 
                     // Check if the response data is null or if the expected keys are not present
                     if (!data || !data.densidad || !data.patrones || !data.criterio) {
-                        resultDiv.innerHTML = '<h1>Solución</h1><p>No existe una solución que cumpla con los parámetros ingresados. Intenta aumentar el máximo de hileras permitidas y/o la máxima tolerancia.</p>';
+                        resultDiv.innerHTML = '<h1>Resultado</h1><p>No existe una solución que cumpla con los parámetros ingresados. Intenta aumentar el máximo de hileras permitidas y/o la máxima tolerancia.</p>';
                         return; // Exit the function early
                     }
 
-                    resultDiv.innerHTML = '<h1>Solución</h1>';
+                    resultDiv.innerHTML = '<h1>Resultado</h1>';
                     let title = `${data.criterio}`;
 
                     // Prepare the patterns for text representation
