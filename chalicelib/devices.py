@@ -95,18 +95,28 @@ class Pattern:
         # Create a new list to hold the reordered solution
         new_solution = []
 
-        # Start with the largest non-zero value
-        new_solution.append(non_zero_values[0])
+        # Calculate the total number of slots (non-zero values + zeros)
+        total_slots = len(non_zero_values) + zeros
 
-        # Interleave the remaining non-zero values with zeros
-        for i in range(1, len(non_zero_values)):
-            new_solution.append(0)  # Add a zero before the next non-zero value
+        # Calculate the number of gaps between non-zero values
+        gaps = len(non_zero_values) + 1  # One more gap than the number of non-zero values
+
+        # Calculate how many zeros to place in each gap
+        zeros_per_gap = zeros // gaps
+        extra_zeros = zeros % gaps
+
+        # Distribute non-zero values and zeros evenly
+        for i in range(len(non_zero_values)):
             new_solution.append(non_zero_values[i])
+            # Add zeros after each non-zero value, if there are remaining zeros
+            if i < len(non_zero_values) - 1 or (i == len(non_zero_values) - 1 and zeros > 0):
+                new_solution.extend([0] * zeros_per_gap)
+                if extra_zeros > 0:
+                    new_solution.append(0)
+                    extra_zeros -= 1
 
-        # If there are remaining zeros after interleaving, append them
-        remaining_zeros = zeros - (len(non_zero_values) - 1)
-        if remaining_zeros > 0:
-            new_solution.extend([0] * remaining_zeros)
+        # If there are remaining zeros, append them at the end
+        new_solution.extend([0] * extra_zeros)
 
         return new_solution
 
@@ -189,16 +199,16 @@ class Pattern:
         return (*optimal_solution, criterion)
 
 # Example values for p and d
-#p = 4420  # Number of plants
-#d = 200 # Number of devices
+p = 1610  # Number of plants
+d = 50 # Number of devices
 
 # Create an instance of the Pattern class
-#pattern_instance = Pattern(p, d)
+pattern_instance = Pattern(p, d)
 
 # Run the optimization to find the optimal solution
-#optimal_density, optimal_patterns, criterion = pattern_instance.run(criterion='min_h', fractions=True)
+optimal_density, optimal_patterns, criterion = pattern_instance.run(criterion='min_h', fractions=True)
 
 # Print the results
-#print(f"Optimal Density: {optimal_density}")
-#print(f"Optimal Patterns: {optimal_patterns}")
-#print(f"Criterion Used: {criterion}")
+print(f"Optimal Density: {optimal_density}")
+print(f"Optimal Patterns: {optimal_patterns}")
+print(f"Criterion Used: {criterion}")
