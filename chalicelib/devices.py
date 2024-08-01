@@ -76,6 +76,39 @@ class Pattern:
         # i.e. we don't want solutions that have "too many" distinct patterns (e.g. [1/2, 1/3, 1/4, 1/5])
         solution_space = [s for s in solution_space if len(set(s)) <= max_unique_patterns]
         return solution_space
+    
+    def reorder_solution(self, solution: list) -> list:
+        """Reorder the solution to start with the largest non-zero value and distribute zeros evenly."""
+        if not solution or all(x == 0 for x in solution):
+            return solution  # No reordering needed if all are zeros
+
+        # Count zeros and find non-zero values
+        zeros = solution.count(0)
+        non_zero_values = [x for x in solution if x != 0]
+
+        if not non_zero_values:
+            return solution  # No non-zero values to reorder
+
+        # Sort non-zero values in descending order
+        non_zero_values.sort(reverse=True)
+
+        # Create a new list to hold the reordered solution
+        new_solution = []
+
+        # Start with the largest non-zero value
+        new_solution.append(non_zero_values[0])
+
+        # Interleave the remaining non-zero values with zeros
+        for i in range(1, len(non_zero_values)):
+            new_solution.append(0)  # Add a zero before the next non-zero value
+            new_solution.append(non_zero_values[i])
+
+        # If there are remaining zeros after interleaving, append them
+        remaining_zeros = zeros - (len(non_zero_values) - 1)
+        if remaining_zeros > 0:
+            new_solution.extend([0] * remaining_zeros)
+
+        return new_solution
 
 
     def compute_densities_over_solution_space(self, solution_space:list) -> list:
@@ -133,10 +166,13 @@ class Pattern:
         # Get solution with minimum density, and then with minimum number of patterns
         if criterion == 'min_d':
             optimal_solution = sorted(filtered_solutions, key=lambda element: (element[0], len(element[1])))[0]
-        
+        # Reorder the optimal solution if it contains zeros
+        reordered_solution = self.reorder_solution(optimal_solution[1])
         # Convert solutions to fractions if requested
         if fractions:
-            optimal_solution = (optimal_solution[0], convert2fractions(optimal_solution[1]))
+            optimal_solution = (optimal_solution[0], convert2fractions(reordered_solution))
+        else:
+            optimal_solution = (optimal_solution[0], reordered_solution)
         
         return optimal_solution
 
@@ -151,3 +187,18 @@ class Pattern:
             optimal_solution = self.find_optimal_solution(solutions, criterion, fractions)
 
         return (*optimal_solution, criterion)
+
+# Example values for p and d
+#p = 4420  # Number of plants
+#d = 200 # Number of devices
+
+# Create an instance of the Pattern class
+#pattern_instance = Pattern(p, d)
+
+# Run the optimization to find the optimal solution
+#optimal_density, optimal_patterns, criterion = pattern_instance.run(criterion='min_h', fractions=True)
+
+# Print the results
+#print(f"Optimal Density: {optimal_density}")
+#print(f"Optimal Patterns: {optimal_patterns}")
+#print(f"Criterion Used: {criterion}")
