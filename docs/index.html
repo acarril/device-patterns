@@ -108,8 +108,9 @@
                     let currentPattern = '';
                     let patternIndices = [];
                     let patternText = '';
+                    let patternsDistributed = distributePatterns(data.patrones);
 
-                    data.patrones.forEach((pattern, index) => {
+                    patternsDistributed.forEach((pattern, index) => {
                         if (pattern !== currentPattern) {
                             if (currentPattern) {
                                 patternText += generatePatternText(patternIndices, currentPattern) + '; ';
@@ -130,7 +131,7 @@
                     let patternCounter = 1;
                     let patternsHtml = '<div class="pattern-wrapper">';  // Start a new variable for the patterns HTML
 
-                    data.patrones.forEach(pattern => {
+                    patternsDistributed.forEach(pattern => {
                         let [numerator, denominator] = pattern.split('/').map(Number);
                         let atomicPattern;
                         if (denominator) {
@@ -170,6 +171,19 @@
 
                 });
             });
+
+            // Helper function to evenly distribute non-zero patterns in solution array
+            function distributePatterns(patterns) {
+                const f = (m, n) => Array.from({ length: m }, (_, i) => Math.floor(i * n / m) + Math.floor(n / (2 * m)));
+                const nonZeros = patterns.filter(p => p !== "0");
+                const nonZeroIndices = f(nonZeros.length, patterns.length);
+                const offset = nonZeroIndices[0];
+                const result = new Array(patterns.length).fill("0");
+                nonZeroIndices.forEach((i, index) => {
+                    result[i - offset] = nonZeros[index];
+                });
+                return result;
+            }
 
             // Helper function to generate pattern text
             function generatePatternText(indices, pattern) {
