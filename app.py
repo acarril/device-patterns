@@ -8,6 +8,7 @@ def distribute_patterns(patterns):
     f = lambda m, n: [i*n//m + n//(2*m) for i in range(m)]
     non_zeros = [p for p in patterns if p != "0"]
     non_zero_indices =  f(len(non_zeros), len(patterns))
+    non_zero_indices = [i - non_zero_indices[0] for i in non_zero_indices]
     result = ["0"] * len(patterns)
     for i, p in zip(non_zero_indices, non_zeros):
         result[i] = p
