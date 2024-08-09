@@ -105,11 +105,12 @@
                     let title = `${data.criterio}`;
 
                     // Prepare the patterns for text representation
+                    const distributedPatrones = distributePatterns(data.patrones);
                     let currentPattern = '';
                     let patternIndices = [];
                     let patternText = '';
 
-                    data.patrones.forEach((pattern, index) => {
+                    data.distributedPatrones.forEach((pattern, index) => {
                         if (pattern !== currentPattern) {
                             if (currentPattern) {
                                 patternText += generatePatternText(patternIndices, currentPattern) + '; ';
@@ -130,7 +131,7 @@
                     let patternCounter = 1;
                     let patternsHtml = '<div class="pattern-wrapper">';  // Start a new variable for the patterns HTML
 
-                    data.patrones.forEach(pattern => {
+                    data.distributedPatrones.forEach(pattern => {
                         let [numerator, denominator] = pattern.split('/').map(Number);
                         let atomicPattern;
                         if (denominator) {
@@ -171,6 +172,41 @@
                 });
             });
 
+            function distributePatterns(patterns) {
+                const nonZeroPatterns = patterns.filter(pattern => pattern !== '0');
+                const zeroPatterns = patterns.filter(pattern => pattern === '0');
+                const totalPatterns = patterns.length;
+                const nonZeroCount = nonZeroPatterns.length;
+                const zeroCount = zeroPatterns.length;
+
+                const distributedPatterns = [];
+                let nonZeroIndex = 0;
+                let zeroIndex = 0;
+
+                for (let i = 0; i < totalPatterns; i++) {
+                    if (nonZeroCount > zeroCount) {
+                        // More non-zero patterns, add zeros in between
+                        if (i % (nonZeroCount / (zeroCount + 1)) === 0) {
+                            distributedPatterns.push(nonZeroPatterns[nonZeroIndex]);
+                            nonZeroIndex++;
+                        } else {
+                            distributedPatterns.push(zeroPatterns[zeroIndex]);
+                            zeroIndex++;
+                        }
+                    } else {
+                        // More zero patterns or equal, add non-zeros in between
+                        if (i % (zeroCount / (nonZeroCount + 1)) === 0) {
+                            distributedPatterns.push(nonZeroPatterns[nonZeroIndex]);
+                            nonZeroIndex++;
+                        } else {
+                            distributedPatterns.push(zeroPatterns[zeroIndex]);
+                            zeroIndex++;
+                        }
+                    }
+                }
+
+                return distributedPatterns;
+            }
             // Helper function to generate pattern text
             function generatePatternText(indices, pattern) {
                 let deviceText = 'emisor';
